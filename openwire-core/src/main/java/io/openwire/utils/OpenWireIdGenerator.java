@@ -34,9 +34,11 @@ public class OpenWireIdGenerator {
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;
+
     private String seed;
     private final AtomicLong sequence = new AtomicLong(1);
     private int length;
+
     public static final String PROPERTY_IDGENERATOR_PORT = "activemq.idgenerator.port";
 
     static {
@@ -87,10 +89,11 @@ public class OpenWireIdGenerator {
                 }
             }
         }
-        // fallback
+
         if (hostName == null) {
             hostName = "localhost";
         }
+
         hostName = sanitizeHostName(hostName);
 
         if (stub.length() == 0) {
@@ -174,7 +177,7 @@ public class OpenWireIdGenerator {
      * From a generated id - return the seed (i.e. minus the count)
      *
      * @param id
-     *        the generated identifer
+     *        the generated identifier
      * @return the seed
      */
     public static String getSeedFromId(String id) {
@@ -208,10 +211,11 @@ public class OpenWireIdGenerator {
     }
 
     /**
-     * Does a proper compare on the ids
+     * Does a proper compare on the IDs
      *
      * @param id1
      * @param id2
+     *
      * @return 0 if equal else a positive if id1 is > id2 ...
      */
     public static int compare(String id1, String id2) {
