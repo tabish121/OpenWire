@@ -34,8 +34,8 @@ public abstract class OpenWireGenerator {
     protected String filePostFix = ".java";
     protected JamService jam;
 
-    protected String commandsPackage = "io.neutronjms.openwire.commands";
-    protected String codecPackageRoot = "io.neutronjms.openwire.codec";
+    protected String commandsPackage = "io.openwire.commands";
+    protected String codecPackageRoot = "io.openwire.codec";
 
     public boolean isValidProperty(JProperty it) {
         JMethod getter = it.getGetter();

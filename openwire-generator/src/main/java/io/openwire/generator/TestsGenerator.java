@@ -37,7 +37,7 @@ public class TestsGenerator extends MultiSourceGenerator {
     @Override
     public Object run() {
         if (destDir == null) {
-            destDir = new File(targetDir + "/org/apache/activemq/openwire/v" + getOpenwireVersion());
+            destDir = new File(targetDir + "/io/openwire/codec/v" + getOpenwireVersion());
         }
         return super.run();
     }
