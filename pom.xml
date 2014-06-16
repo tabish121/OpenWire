@@ -70,6 +70,7 @@
     <module>openwire-generator</module>
     <module>openwire-core</module>
     <module>openwire-legacy</module>
+    <module>openwire-interop-tests</module>
   </modules>
 
   <dependencyManagement>
@@ -78,6 +79,13 @@
         <groupId>io.openwire</groupId>
         <artifactId>openwire-core</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.openwire</groupId>
+        <artifactId>openwire-core</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+        <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>io.openwire</groupId>
