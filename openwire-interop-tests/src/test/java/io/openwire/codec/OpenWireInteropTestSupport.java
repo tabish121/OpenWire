@@ -27,8 +27,11 @@ import io.openwire.util.TransportListener;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
@@ -45,9 +48,10 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWireInteropTestSupport.class);
 
+    protected BrokerService brokerService;
+
     private TcpTransport transport;
     private URI connectionURI;
-    private BrokerService brokerService;
 
     private OpenWireFormatFactory factory;
     private OpenWireFormat wireFormat;
@@ -57,6 +61,10 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
     private WireFormatInfo remoteWireformatInfo;
     private BrokerInfo remoteInfo;
     private Exception failureCause;
+    private final AtomicInteger requestIdGenerator = new AtomicInteger(1);
+
+    private final Map<Integer, CountDownLatch> requestMap =
+        new ConcurrentHashMap<Integer, CountDownLatch>();
 
     private Command latest;
 
@@ -68,6 +76,7 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
 
         factory = new OpenWireFormatFactory();
         factory.setVersion(getOpenWireVersion());
+        factory.setCacheEnabled(false);
 
         wireFormat = factory.createWireFormat();
     }
@@ -90,6 +99,8 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
         transport = new TcpTransport(wireFormat, connectionURI);
         transport.setTransportListener(this);
         transport.start();
+
+        transport.oneway(wireFormat.getPreferedWireFormatInfo());
     }
 
     protected void disconnect() throws Exception {
@@ -99,6 +110,15 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
             Thread.sleep(50);
             transport.stop();
         }
+    }
+
+    protected boolean request(Command command, long timeout, TimeUnit units) throws Exception {
+        command.setCommandId(requestIdGenerator.getAndIncrement());
+        command.setResponseRequired(true);
+        CountDownLatch complete = new CountDownLatch(1);
+        requestMap.put(new Integer(command.getCommandId()), complete);
+        transport.oneway(command);
+        return complete.await(timeout, units);
     }
 
     protected boolean awaitConnected(long time, TimeUnit unit) throws InterruptedException {
@@ -128,7 +148,15 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
             } else if (command instanceof BrokerInfo) {
                 handleBrokerInfo((BrokerInfo) command);
             } else if (command instanceof Response) {
-                this.latest = (Command) command;
+                Response response = (Response) command;
+                this.latest = response;
+                LOG.info("Received response for request: {}, response = {}", response.getCorrelationId(), latest);
+                CountDownLatch done = requestMap.get(response.getCorrelationId());
+                if (done != null) {
+                    done.countDown();
+                }
+            } else {
+                LOG.info("Received unknown command: {}", command);
             }
         } catch (Exception e) {
             failureCause = e;

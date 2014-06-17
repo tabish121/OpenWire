@@ -18,17 +18,64 @@ package io.openwire.codec;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import io.openwire.commands.ConnectionInfo;
+import io.openwire.commands.SessionInfo;
+import io.openwire.utils.OpenWireConnectionId;
 
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
+
+    @Rule public TestName name = new TestName();
+
+    protected OpenWireConnectionId connectionId;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        connectionId = new OpenWireConnectionId();
+    }
 
     @Test(timeout = 60000)
     public void testCanConnect() throws Exception {
         connect();
         assertTrue(awaitConnected(10, TimeUnit.SECONDS));
         assertEquals(getOpenWireVersion(), getRemoteWireFormatInfo().getVersion());
+    }
+
+    @Test(timeout = 60000)
+    public void testCreateConnection() throws Exception {
+        connect();
+        assertTrue(awaitConnected(10, TimeUnit.SECONDS));
+        assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
+        assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
+    }
+
+    @Test(timeout = 60000)
+    public void testCreateSession() throws Exception {
+        connect();
+        assertTrue(awaitConnected(10, TimeUnit.SECONDS));
+        assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
+        assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
+        assertTrue(request(createSessionInfo(), 10, TimeUnit.SECONDS));
+    }
+
+    protected SessionInfo createSessionInfo() {
+        SessionInfo info = new SessionInfo(connectionId.getNextSessionId());
+        return info;
+    }
+
+    protected ConnectionInfo createConnectionInfo() {
+        ConnectionInfo info = new ConnectionInfo(connectionId.getConnectionId());
+        info.setManageable(false);
+        info.setFaultTolerant(false);
+        info.setClientId(name.getMethodName());
+        return info;
     }
 }

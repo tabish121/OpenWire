@@ -36,6 +36,7 @@ public class OpenWireConnectionId {
     private final ConnectionId connectionId;
     private SessionId connectionSessionId;
 
+    private final AtomicLong sessionIdGenerator = new AtomicLong(1);
     private final AtomicLong consumerIdGenerator = new AtomicLong(1);
     private final AtomicLong tempDestinationIdGenerator = new AtomicLong(1);
     private final AtomicLong localTransactionIdGenerator = new AtomicLong(1);
@@ -84,6 +85,15 @@ public class OpenWireConnectionId {
         }
 
         return this.connectionSessionId;
+    }
+
+    /**
+     * Creates a new SessionId for a Session instance that is rooted by this Connection
+     *
+     * @return the next logical SessionId for this ConnectionId instance.
+     */
+    public SessionId getNextSessionId() {
+        return new SessionId(connectionId, sessionIdGenerator.getAndIncrement());
     }
 
     /**
