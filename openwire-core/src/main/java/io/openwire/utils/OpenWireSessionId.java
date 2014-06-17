@@ -90,4 +90,22 @@ public class OpenWireSessionId {
     public String toString() {
         return sessionId.toString();
     }
+
+    /**
+     * Factory method used to create OpenWireConsumerId instances from this Session.
+     *
+     * @returns an OpenWireConsumerId rooted at this SessionId.
+     */
+    public OpenWireConsumerId createOpenWireConsumerId() {
+        return new OpenWireConsumerId(this, getNextConsumerId());
+    }
+
+    /**
+     * Factory method used to create OpenWireProducerId instances from this Session.
+     *
+     * @returns an OpenWireProducerId rooted at this SessionId.
+     */
+    public OpenWireProducerId createOpenWireProducerId() {
+        return new OpenWireProducerId(this, getNextProducerId());
+    }
 }

@@ -66,6 +66,20 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
         assertTrue(request(createSessionInfo(), 10, TimeUnit.SECONDS));
     }
 
+    @Test(timeout = 60000)
+    public void testCreateProducer() throws Exception {
+        connect();
+        assertTrue(awaitConnected(10, TimeUnit.SECONDS));
+        assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
+        assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
+        assertTrue(request(createSessionInfo(), 10, TimeUnit.SECONDS));
+    }
+
+    protected SessionInfo createProducerInfo() {
+        SessionInfo info = new SessionInfo(connectionId.getNextSessionId());
+        return info;
+    }
+
     protected SessionInfo createSessionInfo() {
         SessionInfo info = new SessionInfo(connectionId.getNextSessionId());
         return info;

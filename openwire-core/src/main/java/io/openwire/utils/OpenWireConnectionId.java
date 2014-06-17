@@ -127,4 +127,13 @@ public class OpenWireConnectionId {
     public String toString() {
         return connectionId.toString();
     }
+
+    /**
+     * Factory method for OpenWireSessionId instances
+     *
+     * @return a new OpenWireSessionId with the next logical session ID for this connection.
+     */
+    public OpenWireSessionId createOpenWireSessionId() {
+        return new OpenWireSessionId(connectionId, sessionIdGenerator.getAndIncrement());
+    }
 }
