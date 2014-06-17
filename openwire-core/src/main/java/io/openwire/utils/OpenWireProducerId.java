@@ -17,7 +17,10 @@
 package io.openwire.utils;
 
 import io.openwire.commands.MessageId;
+import io.openwire.commands.OpenWireDestination;
 import io.openwire.commands.ProducerId;
+import io.openwire.commands.ProducerInfo;
+import io.openwire.commands.RemoveInfo;
 import io.openwire.commands.SessionId;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -79,5 +82,29 @@ public class OpenWireProducerId {
     @Override
     public String toString() {
         return producerId.toString();
+    }
+
+    /**
+     * Factory method for creating a ProducerInfo to wrap this instance's ProducerId.
+     *
+     * @param destination
+     *        the target destination for this ProducerInfo instance.
+     *
+     * @return a new ProducerInfo instance that can be used to register a remote producer.
+     */
+    public ProducerInfo createProducerInfo(OpenWireDestination destination) {
+        ProducerInfo info = new ProducerInfo(getProducerId());
+        info.setDestination(destination);
+        return info;
+    }
+
+    /**
+     * Factory method for creating a RemoveInfo command that can be used to remove this
+     * producer instance from the Broker.
+     *
+     * @return a new RemoveInfo instance that can remove this producer.
+     */
+    public RemoveInfo createRemoveInfo() {
+        return new RemoveInfo(getProducerId());
     }
 }

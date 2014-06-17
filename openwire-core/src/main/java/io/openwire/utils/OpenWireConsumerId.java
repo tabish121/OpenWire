@@ -17,6 +17,9 @@
 package io.openwire.utils;
 
 import io.openwire.commands.ConsumerId;
+import io.openwire.commands.ConsumerInfo;
+import io.openwire.commands.OpenWireDestination;
+import io.openwire.commands.RemoveInfo;
 
 /**
  * Encapsulates an ActiveMQ compatible MessageConsumer ID using an OpenWire
@@ -56,5 +59,29 @@ public class OpenWireConsumerId {
     @Override
     public String toString() {
         return consumerId.toString();
+    }
+
+    /**
+     * Factory method for creating a ConsumerInfo to wrap this instance's ConsumerId.
+     *
+     * @param destination
+     *        the target destination for this ProducerInfo instance.
+     *
+     * @return a new ConsumerInfo instance that can be used to register a remote Consumer.
+     */
+    public ConsumerInfo createConsumerInfo(OpenWireDestination destination) {
+        ConsumerInfo info = new ConsumerInfo(getConsumerId());
+        info.setDestination(destination);
+        return info;
+    }
+
+    /**
+     * Factory method for creating a RemoveInfo command that can be used to remove this
+     * consumer instance from the Broker.
+     *
+     * @return a new RemoveInfo instance that can remove this consumer.
+     */
+    public RemoveInfo createRemoveInfo() {
+        return new RemoveInfo(getConsumerId());
     }
 }

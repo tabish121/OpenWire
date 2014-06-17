@@ -19,7 +19,9 @@ package io.openwire.utils;
 import io.openwire.commands.ConnectionId;
 import io.openwire.commands.ConsumerId;
 import io.openwire.commands.ProducerId;
+import io.openwire.commands.RemoveInfo;
 import io.openwire.commands.SessionId;
+import io.openwire.commands.SessionInfo;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -107,5 +109,23 @@ public class OpenWireSessionId {
      */
     public OpenWireProducerId createOpenWireProducerId() {
         return new OpenWireProducerId(this, getNextProducerId());
+    }
+
+    /**
+     * Factory method for creating a SessionInfo to wrap the managed SessionId
+     *
+     * @returns a SessionInfo object that wraps the internal SessionId.
+     */
+    public SessionInfo createSessionInfo() {
+        return new SessionInfo(getSessionId());
+    }
+
+    /**
+     * Factory method for creating a suitable RemoveInfo for this session instance.
+     *
+     * @return a new RemoveInfo instance that can be used to remove this session.
+     */
+    public RemoveInfo createRemoveInfo() {
+        return new RemoveInfo(getSessionId());
     }
 }

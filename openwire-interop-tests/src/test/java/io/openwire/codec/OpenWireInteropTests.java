@@ -19,8 +19,13 @@ package io.openwire.codec;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import io.openwire.commands.ConnectionInfo;
-import io.openwire.commands.SessionInfo;
+import io.openwire.commands.ConsumerInfo;
+import io.openwire.commands.OpenWireTopic;
+import io.openwire.commands.ProducerInfo;
 import io.openwire.utils.OpenWireConnectionId;
+import io.openwire.utils.OpenWireConsumerId;
+import io.openwire.utils.OpenWireProducerId;
+import io.openwire.utils.OpenWireSessionId;
 
 import java.util.concurrent.TimeUnit;
 
@@ -63,7 +68,8 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
         assertTrue(awaitConnected(10, TimeUnit.SECONDS));
         assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
         assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
-        assertTrue(request(createSessionInfo(), 10, TimeUnit.SECONDS));
+        OpenWireSessionId sessionId = connectionId.createOpenWireSessionId();
+        assertTrue(request(sessionId.createSessionInfo(), 10, TimeUnit.SECONDS));
     }
 
     @Test(timeout = 60000)
@@ -72,17 +78,38 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
         assertTrue(awaitConnected(10, TimeUnit.SECONDS));
         assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
         assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
-        assertTrue(request(createSessionInfo(), 10, TimeUnit.SECONDS));
+
+        OpenWireSessionId sessionId = connectionId.createOpenWireSessionId();
+        assertTrue(request(sessionId.createSessionInfo(), 10, TimeUnit.SECONDS));
+        OpenWireProducerId producerId = sessionId.createOpenWireProducerId();
+
+        ProducerInfo info = producerId.createProducerInfo(new OpenWireTopic(name.getMethodName() + "-Topic"));
+        info.setDispatchAsync(false);
+        assertTrue(request(info, 10, TimeUnit.SECONDS));
+        assertEquals(1, brokerService.getAdminView().getTopicProducers().length);
+
+        assertTrue(request(producerId.createRemoveInfo(), 10, TimeUnit.SECONDS));
+        assertEquals(0, brokerService.getAdminView().getTopicProducers().length);
     }
 
-    protected SessionInfo createProducerInfo() {
-        SessionInfo info = new SessionInfo(connectionId.getNextSessionId());
-        return info;
-    }
+    @Test(timeout = 60000)
+    public void testCreateConsumer() throws Exception {
+        connect();
+        assertTrue(awaitConnected(10, TimeUnit.SECONDS));
+        assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
+        assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
 
-    protected SessionInfo createSessionInfo() {
-        SessionInfo info = new SessionInfo(connectionId.getNextSessionId());
-        return info;
+        OpenWireSessionId sessionId = connectionId.createOpenWireSessionId();
+        assertTrue(request(sessionId.createSessionInfo(), 10, TimeUnit.SECONDS));
+        OpenWireConsumerId consumerId = sessionId.createOpenWireConsumerId();
+
+        ConsumerInfo info = consumerId.createConsumerInfo(new OpenWireTopic(name.getMethodName() + "-Topic"));
+        info.setDispatchAsync(false);
+        assertTrue(request(info, 10, TimeUnit.SECONDS));
+        assertEquals(1, brokerService.getAdminView().getTopicSubscribers().length);
+
+        assertTrue(request(consumerId.createRemoveInfo(), 10, TimeUnit.SECONDS));
+        assertEquals(0, brokerService.getAdminView().getTopicSubscribers().length);
     }
 
     protected ConnectionInfo createConnectionInfo() {
