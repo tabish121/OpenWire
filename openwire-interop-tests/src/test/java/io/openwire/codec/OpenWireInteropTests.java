@@ -20,12 +20,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import io.openwire.commands.ConnectionInfo;
 import io.openwire.commands.ConsumerInfo;
+import io.openwire.commands.OpenWireQueue;
+import io.openwire.commands.OpenWireTextMessage;
 import io.openwire.commands.OpenWireTopic;
 import io.openwire.commands.ProducerInfo;
-import io.openwire.utils.OpenWireConnectionId;
-import io.openwire.utils.OpenWireConsumerId;
-import io.openwire.utils.OpenWireProducerId;
-import io.openwire.utils.OpenWireSessionId;
+import io.openwire.utils.OpenWireConnection;
+import io.openwire.utils.OpenWireConsumer;
+import io.openwire.utils.OpenWireProducer;
+import io.openwire.utils.OpenWireSession;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,13 +40,13 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
 
     @Rule public TestName name = new TestName();
 
-    protected OpenWireConnectionId connectionId;
+    protected OpenWireConnection connectionId;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        connectionId = new OpenWireConnectionId();
+        connectionId = new OpenWireConnection();
     }
 
     @Test(timeout = 60000)
@@ -68,7 +70,7 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
         assertTrue(awaitConnected(10, TimeUnit.SECONDS));
         assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
         assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
-        OpenWireSessionId sessionId = connectionId.createOpenWireSessionId();
+        OpenWireSession sessionId = connectionId.createOpenWireSession();
         assertTrue(request(sessionId.createSessionInfo(), 10, TimeUnit.SECONDS));
     }
 
@@ -79,9 +81,9 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
         assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
         assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
 
-        OpenWireSessionId sessionId = connectionId.createOpenWireSessionId();
+        OpenWireSession sessionId = connectionId.createOpenWireSession();
         assertTrue(request(sessionId.createSessionInfo(), 10, TimeUnit.SECONDS));
-        OpenWireProducerId producerId = sessionId.createOpenWireProducerId();
+        OpenWireProducer producerId = sessionId.createOpenWireProducer();
 
         ProducerInfo info = producerId.createProducerInfo(new OpenWireTopic(name.getMethodName() + "-Topic"));
         info.setDispatchAsync(false);
@@ -99,9 +101,9 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
         assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
         assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
 
-        OpenWireSessionId sessionId = connectionId.createOpenWireSessionId();
+        OpenWireSession sessionId = connectionId.createOpenWireSession();
         assertTrue(request(sessionId.createSessionInfo(), 10, TimeUnit.SECONDS));
-        OpenWireConsumerId consumerId = sessionId.createOpenWireConsumerId();
+        OpenWireConsumer consumerId = sessionId.createOpenWireConsumer();
 
         ConsumerInfo info = consumerId.createConsumerInfo(new OpenWireTopic(name.getMethodName() + "-Topic"));
         info.setDispatchAsync(false);
@@ -110,6 +112,39 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
 
         assertTrue(request(consumerId.createRemoveInfo(), 10, TimeUnit.SECONDS));
         assertEquals(0, brokerService.getAdminView().getTopicSubscribers().length);
+    }
+
+    @Test(timeout = 60000)
+    public void testSendMessageToQueue() throws Exception {
+        connect();
+        assertTrue(awaitConnected(10, TimeUnit.SECONDS));
+        assertTrue(request(createConnectionInfo(), 10, TimeUnit.SECONDS));
+        assertEquals(1, brokerService.getAdminView().getCurrentConnectionsCount());
+
+        OpenWireSession sessionId = connectionId.createOpenWireSession();
+        assertTrue(request(sessionId.createSessionInfo(), 10, TimeUnit.SECONDS));
+        OpenWireProducer producerId = sessionId.createOpenWireProducer();
+
+        OpenWireQueue queue = new OpenWireQueue(name.getMethodName() + "-Queue");
+
+        ProducerInfo info = producerId.createProducerInfo(queue);
+        info.setDispatchAsync(false);
+        assertTrue(request(info, 10, TimeUnit.SECONDS));
+        assertEquals(1, brokerService.getAdminView().getQueueProducers().length);
+
+        OpenWireTextMessage message = new OpenWireTextMessage();
+        message.setText("test");
+        message.setJMSTimestamp(System.currentTimeMillis());
+        message.setMessageId(producerId.getNextMessageId());
+        message.setProducerId(producerId.getProducerId());
+        message.setDestination(queue);
+        message.onSend();
+
+        assertTrue(request(message, 10, TimeUnit.SECONDS));
+        assertEquals(1, getProxyToQueue(queue.getPhysicalName()).getQueueSize());
+
+        assertTrue(request(producerId.createRemoveInfo(), 10, TimeUnit.SECONDS));
+        assertEquals(0, brokerService.getAdminView().getQueueProducers().length);
     }
 
     protected ConnectionInfo createConnectionInfo() {

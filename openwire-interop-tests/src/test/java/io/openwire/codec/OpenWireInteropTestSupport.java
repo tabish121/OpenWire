@@ -33,8 +33,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.jms.JMSException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
+import org.apache.activemq.broker.jmx.QueueViewMBean;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -77,6 +82,7 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
         factory = new OpenWireFormatFactory();
         factory.setVersion(getOpenWireVersion());
         factory.setCacheEnabled(false);
+        factory.setTightEncodingEnabled(false);
 
         wireFormat = factory.createWireFormat();
     }
@@ -225,5 +231,19 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
     protected void handleBrokerInfo(BrokerInfo info) throws Exception {
         LOG.info("Received remote BrokerInfo: {}", info);
         this.remoteInfo = info;
+    }
+
+    protected QueueViewMBean getProxyToQueue(String name) throws MalformedObjectNameException, JMSException {
+        ObjectName queueViewMBeanName = new ObjectName("org.apache.activemq:type=Broker,brokerName=localhost,destinationType=Queue,destinationName="+name);
+        QueueViewMBean proxy = (QueueViewMBean) brokerService.getManagementContext()
+                .newProxyInstance(queueViewMBeanName, QueueViewMBean.class, true);
+        return proxy;
+    }
+
+    protected QueueViewMBean getProxyToTopic(String name) throws MalformedObjectNameException, JMSException {
+        ObjectName queueViewMBeanName = new ObjectName("org.apache.activemq:type=Broker,brokerName=localhost,destinationType=Topic,destinationName="+name);
+        QueueViewMBean proxy = (QueueViewMBean) brokerService.getManagementContext()
+                .newProxyInstance(queueViewMBeanName, QueueViewMBean.class, true);
+        return proxy;
     }
 }

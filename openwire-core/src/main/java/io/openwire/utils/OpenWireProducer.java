@@ -29,10 +29,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * Encapsulates an ActiveMQ compatible OpenWire Producer ID and provides
  * functionality used to generate message IDs for the producer.
  */
-public class OpenWireProducerId {
+public class OpenWireProducer {
 
     private final ProducerId producerId;
-    private final OpenWireSessionId parent;
+    private final OpenWireSession parent;
 
     private final AtomicLong messageSequence = new AtomicLong(1);
 
@@ -44,7 +44,7 @@ public class OpenWireProducerId {
      * @param producerId
      *        the ProducerId assigned to this instance.
      */
-    public OpenWireProducerId(OpenWireSessionId parent, ProducerId producerId) {
+    public OpenWireProducer(OpenWireSession parent, ProducerId producerId) {
         this.parent = parent;
         this.producerId = producerId;
     }
@@ -66,7 +66,7 @@ public class OpenWireProducerId {
     /**
      * @return the parent OpenWireSessionId
      */
-    public OpenWireSessionId getParent() {
+    public OpenWireSession getParent() {
         return parent;
     }
 

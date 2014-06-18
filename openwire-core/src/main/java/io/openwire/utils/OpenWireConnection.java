@@ -17,8 +17,10 @@
 package io.openwire.utils;
 
 import io.openwire.commands.ConnectionId;
+import io.openwire.commands.ConnectionInfo;
 import io.openwire.commands.ConsumerId;
 import io.openwire.commands.LocalTransactionId;
+import io.openwire.commands.RemoveInfo;
 import io.openwire.commands.SessionId;
 import io.openwire.commands.TransactionId;
 
@@ -26,10 +28,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Encapsulates an ActiveMQ compatible OpenWire connection Id used to create instance
- * of ConnectionId objects and provides methods for creating OpenWireSessionId instances
+ * of ConnectionId objects and provides methods for creating OpenWireSession instances
  * that are children of this Connection.
  */
-public class OpenWireConnectionId {
+public class OpenWireConnection {
 
     private static final OpenWireIdGenerator idGenerator = new OpenWireIdGenerator();
 
@@ -44,7 +46,7 @@ public class OpenWireConnectionId {
     /**
      * Creates a fixed OpenWire Connection Id instance.
      */
-    public OpenWireConnectionId() {
+    public OpenWireConnection() {
         this(idGenerator.generateId());
     }
 
@@ -54,7 +56,7 @@ public class OpenWireConnectionId {
      * @param connectionId
      *        the set ConnectionId value that this class will use to seed new Session IDs.
      */
-    public OpenWireConnectionId(String connectionId) {
+    public OpenWireConnection(String connectionId) {
         this.connectionId = new ConnectionId(connectionId);
     }
 
@@ -64,7 +66,7 @@ public class OpenWireConnectionId {
      * @param connectionId
      *        the set ConnectionId value that this class will use to seed new Session IDs.
      */
-    public OpenWireConnectionId(ConnectionId connectionId) {
+    public OpenWireConnection(ConnectionId connectionId) {
         this.connectionId = connectionId;
     }
 
@@ -129,11 +131,31 @@ public class OpenWireConnectionId {
     }
 
     /**
-     * Factory method for OpenWireSessionId instances
+     * Factory method for creating a ConnectionInfo command that contains the connection
+     * ID from this OpenWireConnection instance.
      *
-     * @return a new OpenWireSessionId with the next logical session ID for this connection.
+     * @return a new ConnectionInfo that contains the proper connection Id.
      */
-    public OpenWireSessionId createOpenWireSessionId() {
-        return new OpenWireSessionId(connectionId, sessionIdGenerator.getAndIncrement());
+    public ConnectionInfo createConnectionInfo() {
+        return new ConnectionInfo(getConnectionId());
+    }
+
+    /**
+     * Factory method for creating a suitable RemoveInfo command that can be used to remove
+     * this connection from a Broker.
+     *
+     * @return a new RemoveInfo that properly references this connection's Id.
+     */
+    public RemoveInfo createRemoveInfo() {
+        return new RemoveInfo(getConnectionId());
+    }
+
+    /**
+     * Factory method for OpenWireSession instances
+     *
+     * @return a new OpenWireSession with the next logical session ID for this connection.
+     */
+    public OpenWireSession createOpenWireSession() {
+        return new OpenWireSession(connectionId, sessionIdGenerator.getAndIncrement());
     }
 }

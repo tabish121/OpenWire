@@ -25,12 +25,12 @@ import io.openwire.commands.RemoveInfo;
  * Encapsulates an ActiveMQ compatible MessageConsumer ID using an OpenWire
  * ConsumerId generated from a parent Session instance.
  */
-public class OpenWireConsumerId {
+public class OpenWireConsumer {
 
-    private final OpenWireSessionId parent;
+    private final OpenWireSession parent;
     private final ConsumerId consumerId;
 
-    public OpenWireConsumerId(OpenWireSessionId parent, ConsumerId consumerId) {
+    public OpenWireConsumer(OpenWireSession parent, ConsumerId consumerId) {
         this.parent = parent;
         this.consumerId = consumerId;
     }
@@ -38,7 +38,7 @@ public class OpenWireConsumerId {
     /**
      * @return the parent OpenWireSessionId instance.
      */
-    public OpenWireSessionId getParent() {
+    public OpenWireSession getParent() {
         return parent;
     }
 

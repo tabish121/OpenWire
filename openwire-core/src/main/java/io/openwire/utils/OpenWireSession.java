@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Encapsulates an ActiveMQ compatible OpenWire Session ID and provides methods
  * for creating consumer and producer ID objects that are children of this session.
  */
-public class OpenWireSessionId {
+public class OpenWireSession {
 
     private final SessionId sessionId;
 
@@ -43,7 +43,7 @@ public class OpenWireSessionId {
      * @param sessionId
      *        the SessionId assigned to this instance.
      */
-    public OpenWireSessionId(SessionId sessionId) {
+    public OpenWireSession(SessionId sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -56,7 +56,7 @@ public class OpenWireSessionId {
      * @param sequence
      *        the sequence number that identifies this Session instance.
      */
-    public OpenWireSessionId(ConnectionId connectionId, long sequence) {
+    public OpenWireSession(ConnectionId connectionId, long sequence) {
         this(new SessionId(connectionId, sequence));
     }
 
@@ -98,8 +98,8 @@ public class OpenWireSessionId {
      *
      * @returns an OpenWireConsumerId rooted at this SessionId.
      */
-    public OpenWireConsumerId createOpenWireConsumerId() {
-        return new OpenWireConsumerId(this, getNextConsumerId());
+    public OpenWireConsumer createOpenWireConsumer() {
+        return new OpenWireConsumer(this, getNextConsumerId());
     }
 
     /**
@@ -107,8 +107,8 @@ public class OpenWireSessionId {
      *
      * @returns an OpenWireProducerId rooted at this SessionId.
      */
-    public OpenWireProducerId createOpenWireProducerId() {
-        return new OpenWireProducerId(this, getNextProducerId());
+    public OpenWireProducer createOpenWireProducer() {
+        return new OpenWireProducer(this, getNextProducerId());
     }
 
     /**
