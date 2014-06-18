@@ -19,6 +19,8 @@ package io.openwire.codec;
 import io.openwire.commands.BrokerInfo;
 import io.openwire.commands.Command;
 import io.openwire.commands.KeepAliveInfo;
+import io.openwire.commands.Message;
+import io.openwire.commands.MessageDispatch;
 import io.openwire.commands.Response;
 import io.openwire.commands.ShutdownInfo;
 import io.openwire.commands.WireFormatInfo;
@@ -27,6 +29,7 @@ import io.openwire.util.TransportListener;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -71,7 +74,8 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
     private final Map<Integer, CountDownLatch> requestMap =
         new ConcurrentHashMap<Integer, CountDownLatch>();
 
-    private Command latest;
+    protected Command latest;
+    protected final ArrayList<Message> messages = new ArrayList<Message>();
 
     @Before
     public void setUp() throws Exception {
@@ -161,6 +165,10 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
                 if (done != null) {
                     done.countDown();
                 }
+            } else if (command instanceof MessageDispatch) {
+                LOG.info("Received new MessageDispatch: {}", command);
+                MessageDispatch dispatch = (MessageDispatch) command;
+                messages.add(dispatch.getMessage());
             } else {
                 LOG.info("Received unknown command: {}", command);
             }
