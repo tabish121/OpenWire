@@ -17,21 +17,22 @@
 package io.openwire.utils;
 
 import java.io.DataInput;
-import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.UTFDataFormatException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import org.fusesource.hawtbuf.DataByteArrayInputStream;
+import org.fusesource.hawtbuf.DataByteArrayOutputStream;
+import org.fusesource.hawtbuf.UTF8Buffer;
 
 /**
  * The fixed version of the UTF8 encoding function. Some older JVM's UTF8
  * encoding function breaks when handling large strings.
- *
- * @version $Revision$
  */
 public final class OpenWireMarshallingSupport {
 
@@ -58,8 +59,7 @@ public final class OpenWireMarshallingSupport {
             out.writeInt(-1);
         } else {
             out.writeInt(map.size());
-            for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
-                String name = iter.next();
+            for (String name : map.keySet()) {
                 out.writeUTF(name);
                 Object value = map.get(name);
                 marshalPrimitive(out, value);
@@ -67,8 +67,16 @@ public final class OpenWireMarshallingSupport {
         }
     }
 
-    public static Map<String, Object> unmarshalPrimitiveMap(DataInputStream in) throws IOException {
+    public static Map<String, Object> unmarshalPrimitiveMap(DataInput in) throws IOException {
         return unmarshalPrimitiveMap(in, Integer.MAX_VALUE);
+    }
+
+    public static Map<String, Object> unmarshalPrimitiveMap(DataInput in, boolean force) throws IOException {
+        return unmarshalPrimitiveMap(in, Integer.MAX_VALUE, force);
+    }
+
+    public static Map<String, Object> unmarshalPrimitiveMap(DataInput in, int maxPropertySize) throws IOException {
+        return unmarshalPrimitiveMap(in, maxPropertySize, false);
     }
 
     /**
@@ -77,7 +85,7 @@ public final class OpenWireMarshallingSupport {
      * @throws IOException
      * @throws IOException
      */
-    public static Map<String, Object> unmarshalPrimitiveMap(DataInputStream in, int maxPropertySize) throws IOException {
+    public static Map<String, Object> unmarshalPrimitiveMap(DataInput in, int maxPropertySize, boolean force) throws IOException {
         int size = in.readInt();
         if (size > maxPropertySize) {
             throw new IOException("Primitive map is larger than the allowed size: " + size);
@@ -88,7 +96,7 @@ public final class OpenWireMarshallingSupport {
             Map<String, Object> rc = new HashMap<String, Object>(size);
             for (int i = 0; i < size; i++) {
                 String name = in.readUTF();
-                rc.put(name, unmarshalPrimitive(in));
+                rc.put(name, unmarshalPrimitive(in, force));
             }
             return rc;
         }
@@ -96,17 +104,20 @@ public final class OpenWireMarshallingSupport {
 
     public static void marshalPrimitiveList(List<Object> list, DataOutput out) throws IOException {
         out.writeInt(list.size());
-        for (Iterator<Object> iter = list.iterator(); iter.hasNext();) {
-            Object element = iter.next();
+        for (Object element : list) {
             marshalPrimitive(out, element);
         }
     }
 
-    public static List<Object> unmarshalPrimitiveList(DataInputStream in) throws IOException {
+    public static List<Object> unmarshalPrimitiveList(DataInput in) throws IOException {
+        return unmarshalPrimitiveList(in, false);
+    }
+
+    public static List<Object> unmarshalPrimitiveList(DataInput in, boolean force) throws IOException {
         int size = in.readInt();
         List<Object> answer = new ArrayList<Object>(size);
         while (size-- > 0) {
-            answer.add(unmarshalPrimitive(in));
+            answer.add(unmarshalPrimitive(in, force));
         }
         return answer;
     }
@@ -135,6 +146,8 @@ public final class OpenWireMarshallingSupport {
             marshalByteArray(out, (byte[]) value);
         } else if (value.getClass() == String.class) {
             marshalString(out, (String) value);
+        } else if (value.getClass() == UTF8Buffer.class) {
+            marshalString(out, value.toString());
         } else if (value instanceof Map) {
             out.writeByte(MAP_TYPE);
             marshalPrimitiveMap((Map<String, Object>) value, out);
@@ -146,7 +159,11 @@ public final class OpenWireMarshallingSupport {
         }
     }
 
-    public static Object unmarshalPrimitive(DataInputStream in) throws IOException {
+    public static Object unmarshalPrimitive(DataInput in) throws IOException {
+        return unmarshalPrimitive(in, false);
+    }
+
+    public static Object unmarshalPrimitive(DataInput in, boolean force) throws IOException {
         Object value = null;
         byte type = in.readByte();
         switch (type) {
@@ -179,16 +196,25 @@ public final class OpenWireMarshallingSupport {
                 in.readFully((byte[]) value);
                 break;
             case STRING_TYPE:
-                value = in.readUTF();
+                if (force) {
+                    value = in.readUTF();
+                } else {
+                    value = readUTF(in, in.readUnsignedShort());
+                }
                 break;
-            case BIG_STRING_TYPE:
-                value = in.readUTF();
+            case BIG_STRING_TYPE: {
+                if (force) {
+                    value = readUTF8(in);
+                } else {
+                    value = readUTF(in, in.readInt());
+                }
                 break;
+            }
             case MAP_TYPE:
-                value = unmarshalPrimitiveMap(in);
+                value = unmarshalPrimitiveMap(in, true);
                 break;
             case LIST_TYPE:
-                value = unmarshalPrimitiveList(in);
+                value = unmarshalPrimitiveList(in, true);
                 break;
             case NULL:
                 value = null;
@@ -199,13 +225,19 @@ public final class OpenWireMarshallingSupport {
         return value;
     }
 
+    public static UTF8Buffer readUTF(DataInput in, int length) throws IOException {
+        byte data[] = new byte[length];
+        in.readFully(data);
+        return new UTF8Buffer(data);
+    }
+
     public static void marshalNull(DataOutput out) throws IOException {
         out.writeByte(NULL);
     }
 
-    public static void marshalBoolean(DataOutput dataOut, boolean value) throws IOException {
-        dataOut.writeByte(BOOLEAN_TYPE);
-        dataOut.writeBoolean(value);
+    public static void marshalBoolean(DataOutput out, boolean value) throws IOException {
+        out.writeByte(BOOLEAN_TYPE);
+        out.writeBoolean(value);
     }
 
     public static void marshalByte(DataOutput out, byte value) throws IOException {
@@ -260,79 +292,7 @@ public final class OpenWireMarshallingSupport {
             out.writeUTF(s);
         } else {
             out.writeByte(BIG_STRING_TYPE);
-            out.writeUTF(s);
-        }
-    }
-
-    public static String truncate64(String text) {
-        if (text.length() > 63) {
-            text = text.substring(0, 45) + "..." + text.substring(text.length() - 12);
-        }
-        return text;
-    }
-
-    public static String readUTF8(DataInput dataIn) throws IOException {
-        int utflen = dataIn.readInt(); // TODO diff: Sun code
-        if (utflen > -1) {
-            StringBuffer str = new StringBuffer(utflen);
-            byte bytearr[] = new byte[utflen];
-            int c;
-            int char2;
-            int char3;
-            int count = 0;
-
-            dataIn.readFully(bytearr, 0, utflen);
-
-            while (count < utflen) {
-                c = bytearr[count] & 0xff;
-                switch (c >> 4) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                    /* 0xxxxxxx */
-                    count++;
-                    str.append((char)c);
-                    break;
-                case 12:
-                case 13:
-                    /* 110x xxxx 10xx xxxx */
-                    count += 2;
-                    if (count > utflen) {
-                        throw new UTFDataFormatException();
-                    }
-                    char2 = bytearr[count - 1];
-                    if ((char2 & 0xC0) != 0x80) {
-                        throw new UTFDataFormatException();
-                    }
-                    str.append((char)(((c & 0x1F) << 6) | (char2 & 0x3F)));
-                    break;
-                case 14:
-                    /* 1110 xxxx 10xx xxxx 10xx xxxx */
-                    count += 3;
-                    if (count > utflen) {
-                        throw new UTFDataFormatException();
-                    }
-                    char2 = bytearr[count - 2]; // TODO diff: Sun code
-                    char3 = bytearr[count - 1]; // TODO diff: Sun code
-                    if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80)) {
-                        throw new UTFDataFormatException();
-                    }
-                    str.append((char)(((c & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0)));
-                    break;
-                default:
-                    /* 10xx xxxx, 1111 xxxx */
-                    throw new UTFDataFormatException();
-                }
-            }
-            // The number of chars produced may be less than utflen
-            return new String(str);
-        } else {
-            return null;
+            writeUTF8(out, s);
         }
     }
 
@@ -358,23 +318,23 @@ public final class OpenWireMarshallingSupport {
             }
             // TODO diff: Sun code - removed
             byte[] bytearr = new byte[utflen + 4]; // TODO diff: Sun code
-            bytearr[count++] = (byte)((utflen >>> 24) & 0xFF); // TODO diff:
+            bytearr[count++] = (byte) ((utflen >>> 24) & 0xFF); // TODO diff:
             // Sun code
-            bytearr[count++] = (byte)((utflen >>> 16) & 0xFF); // TODO diff:
+            bytearr[count++] = (byte) ((utflen >>> 16) & 0xFF); // TODO diff:
             // Sun code
-            bytearr[count++] = (byte)((utflen >>> 8) & 0xFF);
-            bytearr[count++] = (byte)((utflen >>> 0) & 0xFF);
+            bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
+            bytearr[count++] = (byte) ((utflen >>> 0) & 0xFF);
             for (int i = 0; i < strlen; i++) {
                 c = charr[i];
                 if ((c >= 0x0001) && (c <= 0x007F)) {
-                    bytearr[count++] = (byte)c;
+                    bytearr[count++] = (byte) c;
                 } else if (c > 0x07FF) {
-                    bytearr[count++] = (byte)(0xE0 | ((c >> 12) & 0x0F));
-                    bytearr[count++] = (byte)(0x80 | ((c >> 6) & 0x3F));
-                    bytearr[count++] = (byte)(0x80 | ((c >> 0) & 0x3F));
+                    bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
+                    bytearr[count++] = (byte) (0x80 | ((c >> 6) & 0x3F));
+                    bytearr[count++] = (byte) (0x80 | ((c >> 0) & 0x3F));
                 } else {
-                    bytearr[count++] = (byte)(0xC0 | ((c >> 6) & 0x1F));
-                    bytearr[count++] = (byte)(0x80 | ((c >> 0) & 0x3F));
+                    bytearr[count++] = (byte) (0xC0 | ((c >> 6) & 0x1F));
+                    bytearr[count++] = (byte) (0x80 | ((c >> 0) & 0x3F));
                 }
             }
             dataOut.write(bytearr);
@@ -382,5 +342,98 @@ public final class OpenWireMarshallingSupport {
         } else {
             dataOut.writeInt(-1);
         }
+    }
+
+    public static String readUTF8(DataInput dataIn) throws IOException {
+        int utflen = dataIn.readInt(); // TODO diff: Sun code
+        if (utflen > -1) {
+            StringBuffer str = new StringBuffer(utflen);
+            byte bytearr[] = new byte[utflen];
+            int c;
+            int char2;
+            int char3;
+            int count = 0;
+
+            dataIn.readFully(bytearr, 0, utflen);
+
+            while (count < utflen) {
+                c = bytearr[count] & 0xff;
+                switch (c >> 4) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        /* 0xxxxxxx */
+                        count++;
+                        str.append((char) c);
+                        break;
+                    case 12:
+                    case 13:
+                        /* 110x xxxx 10xx xxxx */
+                        count += 2;
+                        if (count > utflen) {
+                            throw new UTFDataFormatException();
+                        }
+                        char2 = bytearr[count - 1];
+                        if ((char2 & 0xC0) != 0x80) {
+                            throw new UTFDataFormatException();
+                        }
+                        str.append((char) (((c & 0x1F) << 6) | (char2 & 0x3F)));
+                        break;
+                    case 14:
+                        /* 1110 xxxx 10xx xxxx 10xx xxxx */
+                        count += 3;
+                        if (count > utflen) {
+                            throw new UTFDataFormatException();
+                        }
+                        char2 = bytearr[count - 2]; // TODO diff: Sun code
+                        char3 = bytearr[count - 1]; // TODO diff: Sun code
+                        if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80)) {
+                            throw new UTFDataFormatException();
+                        }
+                        str.append((char) (((c & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0)));
+                        break;
+                    default:
+                        /* 10xx xxxx, 1111 xxxx */
+                        throw new UTFDataFormatException();
+                }
+            }
+            // The number of chars produced may be less than utflen
+            return new String(str);
+        } else {
+            return null;
+        }
+    }
+
+    public static String propertiesToString(Properties props) throws IOException {
+        String result = "";
+        if (props != null) {
+            DataByteArrayOutputStream dataOut = new DataByteArrayOutputStream();
+            props.store(dataOut, "");
+            result = new String(dataOut.getData(), 0, dataOut.size());
+            dataOut.close();
+        }
+        return result;
+    }
+
+    public static Properties stringToProperties(String str) throws IOException {
+        Properties result = new Properties();
+        if (str != null && str.length() > 0) {
+            DataByteArrayInputStream dataIn = new DataByteArrayInputStream(str.getBytes());
+            result.load(dataIn);
+            dataIn.close();
+        }
+        return result;
+    }
+
+    public static String truncate64(String text) {
+        if (text.length() > 63) {
+            text = text.substring(0, 45) + "..." + text.substring(text.length() - 12);
+        }
+        return text;
     }
 }
