@@ -21,6 +21,12 @@ package io.openwire.codec;
  */
 public class OpenWireConstants {
 
+    //---------- ActiveMQ Message Extended Property Values -------------------//
+
+    public static final String DLQ_DELIVERY_FAILURE_CAUSE_PROPERTY = "dlqDeliveryFailureCause";
+
+    public static final String BROKER_PATH_PROPERTY = "JMSActiveMQBrokerPath";
+
     //---------- ActiveMQ Advisory Message Identifiers -----------------------//
 
     public static final String ADIVSORY_MESSAGE_TYPE = "Advisory";

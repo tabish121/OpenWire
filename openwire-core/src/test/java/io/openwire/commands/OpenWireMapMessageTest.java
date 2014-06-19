@@ -30,8 +30,6 @@ import java.util.List;
 
 import javax.jms.JMSException;
 import javax.jms.MessageFormatException;
-import javax.jms.MessageNotReadableException;
-import javax.jms.MessageNotWriteableException;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -90,7 +88,6 @@ public class OpenWireMapMessageTest {
     public void testGetBoolean() throws JMSException {
         OpenWireMapMessage msg = new OpenWireMapMessage();
         msg.setBoolean(name.getMethodName(), true);
-        msg.setReadOnlyBody(true);
         assertTrue(msg.getBoolean(name.getMethodName()));
         msg.clearBody();
         msg.setString(name.getMethodName(), "true");
@@ -343,9 +340,7 @@ public class OpenWireMapMessageTest {
         OpenWireMapMessage mapMessage = new OpenWireMapMessage();
         mapMessage.setString("String", "String");
         mapMessage.clearBody();
-        assertFalse(mapMessage.isReadOnlyBody());
 
-        mapMessage.onSend();
         mapMessage.setContent(mapMessage.getContent());
         assertNull(mapMessage.getString("String"));
         mapMessage.clearBody();
@@ -354,133 +349,5 @@ public class OpenWireMapMessageTest {
         mapMessage = (OpenWireMapMessage) mapMessage.copy();
 
         mapMessage.getString("String");
-    }
-
-    @Test
-    public void testReadOnlyBody() throws JMSException {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        msg.setBoolean("boolean", true);
-        msg.setByte("byte", (byte) 1);
-        msg.setBytes("bytes", new byte[1]);
-        msg.setBytes("bytes2", new byte[3], 0, 2);
-        msg.setChar("char", 'a');
-        msg.setDouble("double", 1.5);
-        msg.setFloat("float", 1.5f);
-        msg.setInt("int", 1);
-        msg.setLong("long", 1);
-        msg.setObject("object", "stringObj");
-        msg.setShort("short", (short) 1);
-        msg.setString("string", "string");
-
-        msg.setReadOnlyBody(true);
-
-        try {
-            msg.getBoolean("boolean");
-            msg.getByte("byte");
-            msg.getBytes("bytes");
-            msg.getChar("char");
-            msg.getDouble("double");
-            msg.getFloat("float");
-            msg.getInt("int");
-            msg.getLong("long");
-            msg.getObject("object");
-            msg.getShort("short");
-            msg.getString("string");
-        } catch (MessageNotReadableException mnre) {
-            fail("should be readable");
-        }
-        try {
-            msg.setBoolean("boolean", true);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setByte("byte", (byte) 1);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setBytes("bytes", new byte[1]);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setBytes("bytes2", new byte[3], 0, 2);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setChar("char", 'a');
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setDouble("double", 1.5);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setFloat("float", 1.5f);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setInt("int", 1);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setLong("long", 1);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setObject("object", "stringObj");
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setShort("short", (short) 1);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            msg.setString("string", "string");
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-    }
-
-    @Test
-    public void testWriteOnlyBody() throws JMSException {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        msg.setReadOnlyBody(false);
-
-        msg.setBoolean("boolean", true);
-        msg.setByte("byte", (byte) 1);
-        msg.setBytes("bytes", new byte[1]);
-        msg.setBytes("bytes2", new byte[3], 0, 2);
-        msg.setChar("char", 'a');
-        msg.setDouble("double", 1.5);
-        msg.setFloat("float", 1.5f);
-        msg.setInt("int", 1);
-        msg.setLong("long", 1);
-        msg.setObject("object", "stringObj");
-        msg.setShort("short", (short) 1);
-        msg.setString("string", "string");
-
-        msg.setReadOnlyBody(true);
-
-        msg.getBoolean("boolean");
-        msg.getByte("byte");
-        msg.getBytes("bytes");
-        msg.getChar("char");
-        msg.getDouble("double");
-        msg.getFloat("float");
-        msg.getInt("int");
-        msg.getLong("long");
-        msg.getObject("object");
-        msg.getShort("short");
-        msg.getString("string");
     }
 }

@@ -18,8 +18,8 @@
 package io.openwire.commands;
 
 import io.openwire.codec.OpenWireFormat;
-import io.openwire.utils.ObjectMessageInputStream;
 import io.openwire.utils.ExceptionSupport;
+import io.openwire.utils.ObjectMessageInputStream;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -96,7 +96,7 @@ public class OpenWireObjectMessage extends OpenWireMessage {
     }
 
     @Override
-    public String getJMSXMimeType() {
+    public String getMimeType() {
         return "jms/object-message";
     }
 
@@ -132,7 +132,6 @@ public class OpenWireObjectMessage extends OpenWireMessage {
      *                 read-only mode.
      */
     public void setObject(Serializable newObject) throws JMSException {
-        checkReadOnlyBody();
         this.object = newObject;
         setContent(null);
         storeContent();

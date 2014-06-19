@@ -92,7 +92,7 @@ public class OpenWireStreamMessage extends OpenWireMessage {
     }
 
     @Override
-    public String getJMSXMimeType() {
+    public String getMimeType() {
         return "jms/stream-message";
     }
 
@@ -1002,11 +1002,9 @@ public class OpenWireStreamMessage extends OpenWireMessage {
         this.dataIn = null;
         this.dataOut = null;
         this.remainingBytes = -1;
-        setReadOnlyBody(true);
     }
 
     private void initializeWriting() throws JMSException {
-        checkReadOnlyBody();
         if (this.dataOut == null) {
             this.bytesOut = new ByteArrayOutputStream();
             OutputStream os = bytesOut;
@@ -1045,14 +1043,7 @@ public class OpenWireStreamMessage extends OpenWireMessage {
         }
     }
 
-    protected void checkWriteOnlyBody() throws MessageNotReadableException {
-        if (!readOnlyBody) {
-            throw new MessageNotReadableException("Message body is write-only");
-        }
-    }
-
     private void initializeReading() throws MessageNotReadableException {
-        checkWriteOnlyBody();
         if (this.dataIn == null) {
             Buffer data = getContent();
             if (data == null) {

@@ -17,7 +17,6 @@
 package io.openwire.commands;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -251,12 +250,12 @@ public class OpenWireBytesMessageTest {
         try {
             bytesMessage.writeInt(1);
             bytesMessage.clearBody();
-            assertFalse(bytesMessage.isReadOnlyBody());
             bytesMessage.writeInt(1);
+            bytesMessage.reset();
             bytesMessage.readInt();
         } catch (MessageNotReadableException mnwe) {
         } catch (MessageNotWriteableException mnwe) {
-            assertTrue(false);
+            fail("Should not receive an exceptions in this test.");
         }
     }
 
@@ -271,212 +270,10 @@ public class OpenWireBytesMessageTest {
         }
         message.reset();
         try {
-            assertTrue(message.isReadOnlyBody());
             assertEquals(message.readDouble(), 24.5, 0);
             assertEquals(message.readLong(), 311);
         } catch (MessageNotReadableException mnre) {
             fail("should be readable");
-        }
-        try {
-            message.writeInt(33);
-            fail("should throw exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-    }
-
-    @Test
-    public void testReadOnlyBody() throws JMSException {
-        OpenWireBytesMessage message = new OpenWireBytesMessage();
-        try {
-            message.writeBoolean(true);
-            message.writeByte((byte) 1);
-            message.writeByte((byte) 1);
-            message.writeBytes(new byte[1]);
-            message.writeBytes(new byte[3], 0, 2);
-            message.writeChar('a');
-            message.writeDouble(1.5);
-            message.writeFloat((float) 1.5);
-            message.writeInt(1);
-            message.writeLong(1);
-            message.writeObject("stringobj");
-            message.writeShort((short) 1);
-            message.writeShort((short) 1);
-            message.writeUTF("utfstring");
-        } catch (MessageNotWriteableException mnwe) {
-            fail("Should be writeable");
-        }
-        message.reset();
-        try {
-            message.readBoolean();
-            message.readByte();
-            message.readUnsignedByte();
-            message.readBytes(new byte[1]);
-            message.readBytes(new byte[2], 2);
-            message.readChar();
-            message.readDouble();
-            message.readFloat();
-            message.readInt();
-            message.readLong();
-            message.readUTF();
-            message.readShort();
-            message.readUnsignedShort();
-            message.readUTF();
-        } catch (MessageNotReadableException mnwe) {
-            fail("Should be readable");
-        }
-        try {
-            message.writeBoolean(true);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeByte((byte) 1);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeBytes(new byte[1]);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeBytes(new byte[3], 0, 2);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeChar('a');
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeDouble(1.5);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeFloat((float) 1.5);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeInt(1);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeLong(1);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeObject("stringobj");
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeShort((short) 1);
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-        try {
-            message.writeUTF("utfstring");
-            fail("Should have thrown exception");
-        } catch (MessageNotWriteableException mnwe) {
-        }
-    }
-
-    @Test
-    public void testWriteOnlyBody() throws JMSException {
-        OpenWireBytesMessage message = new OpenWireBytesMessage();
-        message.clearBody();
-        try {
-            message.writeBoolean(true);
-            message.writeByte((byte) 1);
-            message.writeByte((byte) 1);
-            message.writeBytes(new byte[1]);
-            message.writeBytes(new byte[3], 0, 2);
-            message.writeChar('a');
-            message.writeDouble(1.5);
-            message.writeFloat((float) 1.5);
-            message.writeInt(1);
-            message.writeLong(1);
-            message.writeObject("stringobj");
-            message.writeShort((short) 1);
-            message.writeShort((short) 1);
-            message.writeUTF("utfstring");
-        } catch (MessageNotWriteableException mnwe) {
-            fail("Should be writeable");
-        }
-        try {
-            message.readBoolean();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException mnwe) {
-        }
-        try {
-            message.readByte();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readUnsignedByte();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readBytes(new byte[1]);
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readBytes(new byte[2], 2);
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readChar();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readDouble();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readFloat();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readInt();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readLong();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readUTF();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readShort();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readUnsignedShort();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
-        }
-        try {
-            message.readUTF();
-            fail("Should have thrown exception");
-        } catch (MessageNotReadableException e) {
         }
     }
 }

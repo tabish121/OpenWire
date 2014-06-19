@@ -78,6 +78,7 @@ public class OpenWireBlobMessage extends OpenWireMessage {
      *
      * @openwire:property version=3 cache=true
      */
+    @Override
     public String getMimeType() {
         if (mimeType == null) {
             return BINARY_MIME_TYPE;
@@ -112,11 +113,6 @@ public class OpenWireBlobMessage extends OpenWireMessage {
 
     public void setDeletedByBroker(boolean deletedByBroker) {
         this.deletedByBroker = deletedByBroker;
-    }
-
-    @Override
-    public String getJMSXMimeType() {
-        return getMimeType();
     }
 
     public InputStream getInputStream() throws IOException, JMSException {

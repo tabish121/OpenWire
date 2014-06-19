@@ -138,7 +138,7 @@ public class OpenWireMapMessage extends OpenWireMessage {
     }
 
     @Override
-    public String getJMSXMimeType() {
+    public String getMimeType() {
         return "jms/map-message";
     }
 
@@ -724,7 +724,6 @@ public class OpenWireMapMessage extends OpenWireMessage {
     }
 
     private void initializeWriting() throws MessageNotWriteableException {
-        checkReadOnlyBody();
         setContent(null);
     }
 

@@ -106,7 +106,7 @@ public class OpenWireBytesMessage extends OpenWireMessage {
     }
 
     @Override
-    public String getJMSXMimeType() {
+    public String getMimeType() {
         return "jms/bytes-message";
     }
 
@@ -727,7 +727,6 @@ public class OpenWireBytesMessage extends OpenWireMessage {
      */
     public void reset() throws JMSException {
         storeContent();
-        setReadOnlyBody(true);
         try {
             if (bytesOut != null) {
                 bytesOut.close();
@@ -747,7 +746,6 @@ public class OpenWireBytesMessage extends OpenWireMessage {
     }
 
     private void initializeWriting() throws JMSException {
-        checkReadOnlyBody();
         if (this.dataOut == null) {
             this.bytesOut = new ByteArrayOutputStream();
             OutputStream os = bytesOut;
@@ -781,14 +779,7 @@ public class OpenWireBytesMessage extends OpenWireMessage {
         }
     }
 
-    protected void checkWriteOnlyBody() throws MessageNotReadableException {
-        if (!readOnlyBody) {
-            throw new MessageNotReadableException("Message body is write-only");
-        }
-    }
-
     private void initializeReading() throws JMSException {
-        checkWriteOnlyBody();
         if (dataIn == null) {
             try {
             Buffer data = getContent();
@@ -833,9 +824,9 @@ public class OpenWireBytesMessage extends OpenWireMessage {
     }
 
     @Override
-    public void setObjectProperty(String name, Object value) throws JMSException {
+    public void setProperty(String name, Object value) throws JMSException {
         initializeWriting();
-        super.setObjectProperty(name, value);
+        super.setProperty(name, value);
     }
 
     @Override

@@ -136,7 +136,7 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
 
         OpenWireTextMessage message = new OpenWireTextMessage();
         message.setText("test");
-        message.setJMSTimestamp(System.currentTimeMillis());
+        message.setTimestamp(System.currentTimeMillis());
         message.setMessageId(producerId.getNextMessageId());
         message.setProducerId(producerId.getProducerId());
         message.setDestination(queue);
@@ -169,7 +169,7 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
 
         OpenWireTextMessage message = new OpenWireTextMessage();
         message.setText("test");
-        message.setJMSTimestamp(System.currentTimeMillis());
+        message.setTimestamp(System.currentTimeMillis());
         message.setMessageId(producerId.getNextMessageId());
         message.setProducerId(producerId.getProducerId());
         message.setDestination(queue);

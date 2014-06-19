@@ -18,6 +18,7 @@ package io.openwire.commands;
 
 import static io.openwire.codec.OpenWireConstants.ADIVSORY_MESSAGE_TYPE;
 import io.openwire.codec.OpenWireFormat;
+import io.openwire.utils.ExceptionSupport;
 import io.openwire.utils.OpenWireMarshallingSupport;
 
 import java.io.DataInputStream;
@@ -81,8 +82,6 @@ public abstract class Message extends BaseCommand implements MarshallAware {
 
     protected int size;
     protected Map<String, Object> properties;
-    protected boolean readOnlyProperties;
-    protected boolean readOnlyBody;
     protected transient boolean recievedByDFBridge;
     protected boolean droppable;
     protected boolean jmsXGroupFirstForConsumer;
@@ -133,8 +132,6 @@ public abstract class Message extends BaseCommand implements MarshallAware {
         copy.content = content;
         copy.marshalledProperties = marshalledProperties;
         copy.dataStructure = dataStructure;
-        copy.readOnlyProperties = readOnlyProperties;
-        copy.readOnlyBody = readOnlyBody;
         copy.compressed = compressed;
         copy.recievedByDFBridge = recievedByDFBridge;
 
@@ -143,21 +140,6 @@ public abstract class Message extends BaseCommand implements MarshallAware {
         copy.brokerOutTime = brokerOutTime;
         copy.brokerPath = brokerPath;
         copy.jmsXGroupFirstForConsumer = jmsXGroupFirstForConsumer;
-    }
-
-    public Object getProperty(String name) throws IOException {
-        if (properties == null) {
-            if (marshalledProperties == null) {
-                return null;
-            }
-            properties = unmarsallProperties(marshalledProperties);
-        }
-        Object result = properties.get(name);
-        if (result instanceof UTF8Buffer) {
-            result = result.toString();
-        }
-
-        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -176,22 +158,46 @@ public abstract class Message extends BaseCommand implements MarshallAware {
         properties = null;
     }
 
-    public void setProperty(String name, Object value) throws IOException {
+    public Object getProperty(String name) throws JMSException {
+        if (properties == null) {
+            if (marshalledProperties == null) {
+                return null;
+            }
+            try {
+                properties = unmarsallProperties(marshalledProperties);
+            } catch (IOException e) {
+                throw ExceptionSupport.create("Error during properties unmarshal, reason: " + e.getMessage(), e);
+            }
+        }
+        Object result = properties.get(name);
+        if (result instanceof UTF8Buffer) {
+            result = result.toString();
+        }
+
+        return result;
+    }
+
+    public void setProperty(String name, Object value) throws JMSException {
         lazyCreateProperties();
         properties.put(name, value);
     }
 
-    public void removeProperty(String name) throws IOException {
+    public void removeProperty(String name) throws JMSException {
         lazyCreateProperties();
         properties.remove(name);
     }
 
-    protected void lazyCreateProperties() throws IOException {
+    protected void lazyCreateProperties() throws JMSException {
         if (properties == null) {
             if (marshalledProperties == null) {
                 properties = new HashMap<String, Object>();
             } else {
-                properties = unmarsallProperties(marshalledProperties);
+                try {
+                    properties = unmarsallProperties(marshalledProperties);
+                } catch (IOException e) {
+                    throw ExceptionSupport.create(
+                        "Error during properties unmarshal, reason: " + e.getMessage(), e);
+                }
                 marshalledProperties = null;
             }
         } else {
@@ -510,22 +516,6 @@ public abstract class Message extends BaseCommand implements MarshallAware {
 
     public void setBrokerPath(BrokerId[] brokerPath) {
         this.brokerPath = brokerPath;
-    }
-
-    public boolean isReadOnlyProperties() {
-        return readOnlyProperties;
-    }
-
-    public void setReadOnlyProperties(boolean readOnlyProperties) {
-        this.readOnlyProperties = readOnlyProperties;
-    }
-
-    public boolean isReadOnlyBody() {
-        return readOnlyBody;
-    }
-
-    public void setReadOnlyBody(boolean readOnlyBody) {
-        this.readOnlyBody = readOnlyBody;
     }
 
     /**

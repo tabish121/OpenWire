@@ -25,7 +25,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -63,12 +62,11 @@ public class OpenWireTextMessage extends OpenWireMessage {
     }
 
     @Override
-    public String getJMSXMimeType() {
+    public String getMimeType() {
         return "jms/text-message";
     }
 
     public void setText(String text) throws MessageNotWriteableException {
-        checkReadOnlyBody();
         this.text = text;
         setContent(null);
     }
@@ -182,19 +180,18 @@ public class OpenWireTextMessage extends OpenWireMessage {
 
     @Override
     public String toString() {
-        try {
-            String text = this.text;
-            if( text == null ) {
+        String text = this.text;
+        if( text == null ) {
+            try {
                 text = decodeContent();
+            } catch (JMSException ex) {
             }
-            if (text != null) {
-                text = OpenWireMarshallingSupport.truncate64(text);
-                HashMap<String, Object> overrideFields = new HashMap<String, Object>();
-                overrideFields.put("text", text);
-                return getClass().getSimpleName() + " { " + text + " }";
-            }
-        } catch (JMSException e) {
         }
-        return super.toString();
+        if (text != null) {
+            text = OpenWireMarshallingSupport.truncate64(text);
+            return getClass().getSimpleName() + " { text = " + text + " }";
+        } else {
+            return getClass().getSimpleName() + " { text = null }";
+        }
     }
 }
