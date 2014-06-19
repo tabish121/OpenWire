@@ -39,10 +39,6 @@
     <!-- Required Dependencies                -->
     <!-- =================================== -->
     <dependency>
-      <groupId>io.openwire</groupId>
-      <artifactId>openwire-generator</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
