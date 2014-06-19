@@ -26,6 +26,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -987,6 +989,47 @@ public class OpenWireStreamMessage extends OpenWireMessage {
             writeLong(((Long)value).longValue());
         } else {
             throw new MessageFormatException("Unsupported Object type: " + value.getClass());
+        }
+    }
+
+    /**
+     * Reads the contents of the StreamMessage instances into a single List<Object> instance
+     * and returns it.  The read starts from the current position of the message which implies
+     * that the list might not be a complete view of the message if any prior read operations
+     * were invoked.
+     *
+     * @return a List containing the objects store in this message starting from the current position.
+     *
+     * @throws JMSException if an error occurs while reading the message.
+     */
+    public List<Object> readStreamToList() throws JMSException {
+        List<Object> result = new ArrayList<Object>();
+        while (true) {
+            try {
+                result.add(readObject());
+            } catch (MessageEOFException ex) {
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Writes the given set of Objects to the messages stream.  The elements in the list
+     * must adhere to the supported types of a JMS StreamMessage or an exception will be
+     * thrown.
+     *
+     * @param elements
+     *        the list of elements to store into the list.
+     *
+     * @throws JMSException if an error occurs while writing the elements to the message.
+     */
+    public void writeListToStream(List<Object> elements) throws JMSException {
+        if (elements != null) {
+            for (Object value : elements) {
+                writeObject(value);
+            }
         }
     }
 

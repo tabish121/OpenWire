@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -47,17 +46,17 @@ public class OpenWireMapMessageTest {
     @Test
     public void testBytesConversion() throws JMSException, IOException {
         OpenWireMapMessage msg = new OpenWireMapMessage();
-        msg.setBoolean("boolean", true);
-        msg.setByte("byte", (byte) 1);
-        msg.setBytes("bytes", new byte[1]);
-        msg.setChar("char", 'a');
-        msg.setDouble("double", 1.5);
-        msg.setFloat("float", 1.5f);
-        msg.setInt("int", 1);
-        msg.setLong("long", 1);
+        msg.setObject("boolean", true);
+        msg.setObject("byte", (byte) 1);
+        msg.setObject("bytes", new byte[1]);
+        msg.setObject("char", 'a');
+        msg.setObject("double", 1.5);
+        msg.setObject("float", 1.5f);
+        msg.setObject("int", 1);
+        msg.setObject("long", 1L);
         msg.setObject("object", "stringObj");
-        msg.setShort("short", (short) 1);
-        msg.setString("string", "string");
+        msg.setObject("short", (short) 1);
+        msg.setObject("string", "string");
 
         // Test with a 1Meg String
         StringBuffer bigSB = new StringBuffer(1024 * 1024);
@@ -66,153 +65,22 @@ public class OpenWireMapMessageTest {
         }
         String bigString = bigSB.toString();
 
-        msg.setString("bigString", bigString);
+        msg.setObject("bigString", bigString);
 
         msg = (OpenWireMapMessage) msg.copy();
 
-        assertEquals(msg.getBoolean("boolean"), true);
-        assertEquals(msg.getByte("byte"), (byte) 1);
-        assertEquals(msg.getBytes("bytes").length, 1);
-        assertEquals(msg.getChar("char"), 'a');
-        assertEquals(msg.getDouble("double"), 1.5, 0);
-        assertEquals(msg.getFloat("float"), 1.5f, 0);
-        assertEquals(msg.getInt("int"), 1);
-        assertEquals(msg.getLong("long"), 1);
+        assertEquals(msg.getObject("boolean"), true);
+        assertEquals(msg.getObject("byte"), (byte) 1);
+        assertEquals(((byte[]) msg.getObject("bytes")).length, 1);
+        assertEquals(msg.getObject("char"), 'a');
+        assertEquals((Double) msg.getObject("double"), 1.5, 0);
+        assertEquals((Float) msg.getObject("float"), 1.5f, 0);
+        assertEquals(msg.getObject("int"), 1);
+        assertEquals(msg.getObject("long"), 1L);
         assertEquals(msg.getObject("object"), "stringObj");
-        assertEquals(msg.getShort("short"), (short) 1);
-        assertEquals(msg.getString("string"), "string");
-        assertEquals(msg.getString("bigString"), bigString);
-    }
-
-    @Test
-    public void testGetBoolean() throws JMSException {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        msg.setBoolean(name.getMethodName(), true);
-        assertTrue(msg.getBoolean(name.getMethodName()));
-        msg.clearBody();
-        msg.setString(name.getMethodName(), "true");
-
-        msg = (OpenWireMapMessage) msg.copy();
-
-        assertTrue(msg.getBoolean(name.getMethodName()));
-    }
-
-    @Test
-    public void testGetByte() throws JMSException {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        msg.setByte(name.getMethodName(), (byte) 1);
-        msg = (OpenWireMapMessage) msg.copy();
-        assertTrue(msg.getByte(name.getMethodName()) == (byte) 1);
-    }
-
-    @Test
-    public void testGetShort() {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        try {
-            msg.setShort(name.getMethodName(), (short) 1);
-            msg = (OpenWireMapMessage) msg.copy();
-            assertTrue(msg.getShort(name.getMethodName()) == (short) 1);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testGetChar() {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        try {
-            msg.setChar(name.getMethodName(), 'a');
-            msg = (OpenWireMapMessage) msg.copy();
-            assertTrue(msg.getChar(name.getMethodName()) == 'a');
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testGetInt() {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        try {
-            msg.setInt(name.getMethodName(), 1);
-            msg = (OpenWireMapMessage) msg.copy();
-            assertTrue(msg.getInt(name.getMethodName()) == 1);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testGetLong() {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        try {
-            msg.setLong(name.getMethodName(), 1);
-            msg = (OpenWireMapMessage) msg.copy();
-            assertTrue(msg.getLong(name.getMethodName()) == 1);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testGetFloat() {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        try {
-            msg.setFloat(name.getMethodName(), 1.5f);
-            msg = (OpenWireMapMessage) msg.copy();
-            assertTrue(msg.getFloat(name.getMethodName()) == 1.5f);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testGetDouble() {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        try {
-            msg.setDouble(name.getMethodName(), 1.5);
-            msg = (OpenWireMapMessage) msg.copy();
-            assertTrue(msg.getDouble(name.getMethodName()) == 1.5);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testGetString() {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        try {
-            String str = "test";
-            msg.setString(name.getMethodName(), str);
-            msg = (OpenWireMapMessage) msg.copy();
-            assertEquals(msg.getString(name.getMethodName()), str);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testGetBytes() {
-        OpenWireMapMessage msg = new OpenWireMapMessage();
-        try {
-            byte[] bytes1 = new byte[3];
-            byte[] bytes2 = new byte[2];
-            System.arraycopy(bytes1, 0, bytes2, 0, 2);
-            msg.setBytes(name.getMethodName(), bytes1);
-            msg.setBytes(name.getMethodName() + "2", bytes1, 0, 2);
-            msg = (OpenWireMapMessage) msg.copy();
-            assertTrue(Arrays.equals(msg.getBytes(name.getMethodName()), bytes1));
-            assertEquals(msg.getBytes(name.getMethodName() + "2").length, bytes2.length);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        assertEquals(msg.getObject("short"), (short) 1);
+        assertEquals(msg.getObject("string"), "string");
+        assertEquals(msg.getObject("bigString"), bigString);
     }
 
     @Test
@@ -250,34 +118,25 @@ public class OpenWireMapMessageTest {
 
         assertTrue(msg.getObject("boolean") instanceof Boolean);
         assertEquals(msg.getObject("boolean"), booleanValue);
-        assertEquals(msg.getBoolean("boolean"), booleanValue.booleanValue());
         assertTrue(msg.getObject("byte") instanceof Byte);
         assertEquals(msg.getObject("byte"), byteValue);
-        assertEquals(msg.getByte("byte"), byteValue.byteValue());
         assertTrue(msg.getObject("bytes") instanceof byte[]);
         assertEquals(((byte[]) msg.getObject("bytes")).length, bytesValue.length);
-        assertEquals(msg.getBytes("bytes").length, bytesValue.length);
+        assertEquals(((byte[])msg.getObject("bytes")).length, bytesValue.length);
         assertTrue(msg.getObject("char") instanceof Character);
         assertEquals(msg.getObject("char"), charValue);
-        assertEquals(msg.getChar("char"), charValue.charValue());
         assertTrue(msg.getObject("double") instanceof Double);
         assertEquals(msg.getObject("double"), doubleValue);
-        assertEquals(msg.getDouble("double"), doubleValue.doubleValue(), 0);
         assertTrue(msg.getObject("float") instanceof Float);
         assertEquals(msg.getObject("float"), floatValue);
-        assertEquals(msg.getFloat("float"), floatValue.floatValue(), 0);
         assertTrue(msg.getObject("int") instanceof Integer);
         assertEquals(msg.getObject("int"), intValue);
-        assertEquals(msg.getInt("int"), intValue.intValue());
         assertTrue(msg.getObject("long") instanceof Long);
         assertEquals(msg.getObject("long"), longValue);
-        assertEquals(msg.getLong("long"), longValue.longValue());
         assertTrue(msg.getObject("short") instanceof Short);
         assertEquals(msg.getObject("short"), shortValue);
-        assertEquals(msg.getShort("short"), shortValue.shortValue());
         assertTrue(msg.getObject("string") instanceof String);
         assertEquals(msg.getObject("string"), stringValue);
-        assertEquals(msg.getString("string"), stringValue);
 
         msg.clearBody();
         try {
@@ -290,29 +149,27 @@ public class OpenWireMapMessageTest {
     @Test
     public void testGetMapNames() throws JMSException {
         OpenWireMapMessage msg = new OpenWireMapMessage();
-        msg.setBoolean("boolean", true);
-        msg.setByte("byte", (byte) 1);
-        msg.setBytes("bytes1", new byte[1]);
-        msg.setBytes("bytes2", new byte[3], 0, 2);
-        msg.setChar("char", 'a');
-        msg.setDouble("double", 1.5);
-        msg.setFloat("float", 1.5f);
-        msg.setInt("int", 1);
-        msg.setLong("long", 1);
+        msg.setObject("boolean", true);
+        msg.setObject("byte", (byte) 1);
+        msg.setObject("bytes1", new byte[1]);
+        msg.setObject("char", 'a');
+        msg.setObject("double", 1.5);
+        msg.setObject("float", 1.5f);
+        msg.setObject("int", 1);
+        msg.setObject("long", 1);
         msg.setObject("object", "stringObj");
-        msg.setShort("short", (short) 1);
-        msg.setString("string", "string");
+        msg.setObject("short", (short) 1);
+        msg.setObject("string", "string");
 
         msg = (OpenWireMapMessage) msg.copy();
 
         Enumeration<String> mapNamesEnum = msg.getMapNames();
         List<String> mapNamesList = Collections.list(mapNamesEnum);
 
-        assertEquals(mapNamesList.size(), 12);
+        assertEquals(mapNamesList.size(), 11);
         assertTrue(mapNamesList.contains("boolean"));
         assertTrue(mapNamesList.contains("byte"));
         assertTrue(mapNamesList.contains("bytes1"));
-        assertTrue(mapNamesList.contains("bytes2"));
         assertTrue(mapNamesList.contains("char"));
         assertTrue(mapNamesList.contains("double"));
         assertTrue(mapNamesList.contains("float"));
@@ -327,7 +184,7 @@ public class OpenWireMapMessageTest {
     public void testItemExists() throws JMSException {
         OpenWireMapMessage mapMessage = new OpenWireMapMessage();
 
-        mapMessage.setString("exists", "test");
+        mapMessage.setObject("exists", "test");
 
         mapMessage = (OpenWireMapMessage) mapMessage.copy();
 
@@ -338,16 +195,16 @@ public class OpenWireMapMessageTest {
     @Test
     public void testClearBody() throws JMSException {
         OpenWireMapMessage mapMessage = new OpenWireMapMessage();
-        mapMessage.setString("String", "String");
+        mapMessage.setObject("String", "String");
         mapMessage.clearBody();
 
         mapMessage.setContent(mapMessage.getContent());
-        assertNull(mapMessage.getString("String"));
+        assertNull(mapMessage.getObject("String"));
         mapMessage.clearBody();
-        mapMessage.setString("String", "String");
+        mapMessage.setObject("String", "String");
 
         mapMessage = (OpenWireMapMessage) mapMessage.copy();
 
-        mapMessage.getString("String");
+        mapMessage.getObject("String");
     }
 }

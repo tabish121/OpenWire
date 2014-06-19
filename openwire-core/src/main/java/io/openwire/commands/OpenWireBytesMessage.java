@@ -40,6 +40,14 @@ import org.fusesource.hawtbuf.ByteArrayInputStream;
 import org.fusesource.hawtbuf.ByteArrayOutputStream;
 
 /**
+ * Provides an abstraction layer around the standard OpenWireMessage object for
+ * implementation of a JMS style BytesMessage instance.  This class provides access
+ * to the message body content via mechanism that make it easy to wrap this object
+ * and adhere to the JMS BytesMessage interface.
+ *
+ * TODO Slim this down to just the methods needed to access the message body as
+ * a stream of bytes either for read or for write.
+ *
  * openwire:marshaller code=24
  */
 public class OpenWireBytesMessage extends OpenWireMessage {
@@ -79,7 +87,7 @@ public class OpenWireBytesMessage extends OpenWireMessage {
                 dataOut.close();
                 Buffer bs = bytesOut.toBuffer();
                 setContent(bs);
-                if (compressed) {
+                if (isUseCompression()) {
                     doCompress();
                 }
             } catch (IOException ioe) {
