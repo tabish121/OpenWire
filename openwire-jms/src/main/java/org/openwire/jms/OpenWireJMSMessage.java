@@ -52,6 +52,13 @@ public class OpenWireJMSMessage implements Message {
         this.message = message;
     }
 
+    /**
+     * @return the wrapped OpenWireMessage instance.
+     */
+    public OpenWireMessage getOpenWireMessage() {
+        return this.message;
+    }
+
     @Override
     public String getJMSMessageID() throws JMSException {
         return message.getMessageIdAsString();
