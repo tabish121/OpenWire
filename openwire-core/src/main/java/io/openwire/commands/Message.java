@@ -153,7 +153,7 @@ public abstract class Message extends BaseCommand implements MarshallAware {
         return Collections.unmodifiableMap(properties);
     }
 
-    public void clearProperties() {
+    public void clearProperties() throws JMSException {
         marshalledProperties = null;
         properties = null;
     }

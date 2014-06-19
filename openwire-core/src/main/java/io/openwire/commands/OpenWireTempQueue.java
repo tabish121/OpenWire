@@ -16,13 +16,16 @@
  */
 package io.openwire.commands;
 
+import javax.jms.JMSException;
+import javax.jms.TemporaryQueue;
+
 
 /**
  * Represents an ActiveMQ Temporary Queue.
  *
  * @openwire:marshaller code="102"
  */
-public class OpenWireTempQueue extends OpenWireTempDestination {
+public class OpenWireTempQueue extends OpenWireTempDestination implements TemporaryQueue {
 
     public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_TEMP_QUEUE;
 
@@ -55,5 +58,14 @@ public class OpenWireTempQueue extends OpenWireTempDestination {
     @Override
     protected String getQualifiedPrefix() {
         return TEMP_QUEUE_QUALIFED_PREFIX;
+    }
+
+    @Override
+    public String getQueueName() throws JMSException {
+        return getPhysicalName();
+    }
+
+    @Override
+    public void delete() throws JMSException {
     }
 }

@@ -16,11 +16,14 @@
  */
 package io.openwire.commands;
 
+import javax.jms.JMSException;
+import javax.jms.Queue;
+
 
 /**
  * @openwire:marshaller code="100"
  */
-public class OpenWireQueue extends OpenWireDestination {
+public class OpenWireQueue extends OpenWireDestination implements Queue {
 
     public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_QUEUE;
 
@@ -49,5 +52,10 @@ public class OpenWireQueue extends OpenWireDestination {
     @Override
     protected String getQualifiedPrefix() {
         return QUEUE_QUALIFIED_PREFIX;
+    }
+
+    @Override
+    public String getQueueName() throws JMSException {
+        return getPhysicalName();
     }
 }

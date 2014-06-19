@@ -39,7 +39,7 @@ import javax.jms.Topic;
  *
  * @openwire:marshaller
  */
-public abstract class OpenWireDestination implements DataStructure, Comparable<OpenWireDestination> {
+public abstract class OpenWireDestination implements Destination, DataStructure, Comparable<OpenWireDestination> {
 
     public static final String PATH_SEPERATOR = ".";
     public static final char COMPOSITE_SEPERATOR = ',';

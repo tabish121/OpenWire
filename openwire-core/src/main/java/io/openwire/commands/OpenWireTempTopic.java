@@ -16,10 +16,13 @@
  */
 package io.openwire.commands;
 
+import javax.jms.JMSException;
+import javax.jms.TemporaryTopic;
+
 /**
  * @openwire:marshaller code="103"
  */
-public class OpenWireTempTopic extends OpenWireTempDestination {
+public class OpenWireTempTopic extends OpenWireTempDestination implements TemporaryTopic {
 
     public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_TEMP_TOPIC;
 
@@ -52,5 +55,15 @@ public class OpenWireTempTopic extends OpenWireTempDestination {
     @Override
     protected String getQualifiedPrefix() {
         return TEMP_TOPIC_QUALIFED_PREFIX;
+    }
+
+    @Override
+    public String getTopicName() throws JMSException {
+        return getPhysicalName();
+    }
+
+    @Override
+    public void delete() throws JMSException {
+
     }
 }
