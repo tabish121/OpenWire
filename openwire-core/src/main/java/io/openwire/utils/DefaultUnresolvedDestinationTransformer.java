@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.openwire.commands;
+package io.openwire.utils;
+
+import io.openwire.commands.OpenWireDestination;
+import io.openwire.commands.OpenWireQueue;
+import io.openwire.commands.OpenWireTopic;
 
 import java.lang.reflect.Method;
 
@@ -23,6 +27,10 @@ import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
+/**
+ * A default implementation of the resolver that attempts to find an isQueue or isTopic method
+ * on the foreign destination to determine the correct type.
+ */
 public class DefaultUnresolvedDestinationTransformer implements UnresolvedDestinationTransformer {
 
     @Override
@@ -33,9 +41,15 @@ public class DefaultUnresolvedDestinationTransformer implements UnresolvedDestin
         if (queueName == null && topicName == null) {
             throw new JMSException("Unresolvable destination: Both queue and topic names are null: " + dest);
         }
+
         try {
             Method isQueueMethod = dest.getClass().getMethod("isQueue");
             Method isTopicMethod = dest.getClass().getMethod("isTopic");
+
+            if (isQueueMethod == null && isTopicMethod == null) {
+                throw new JMSException("Unresolvable destination: Neither isQueue nor isTopic methods present: " + dest);
+            }
+
             Boolean isQueue = (Boolean) isQueueMethod.invoke(dest);
             Boolean isTopic = (Boolean) isTopicMethod.invoke(dest);
             if (isQueue) {
@@ -45,8 +59,8 @@ public class DefaultUnresolvedDestinationTransformer implements UnresolvedDestin
             } else {
                 throw new JMSException("Unresolvable destination: Neither Queue nor Topic: " + dest);
             }
-        } catch (Exception e)  {
-            throw new JMSException("Unresolvable destination: "  + e.getMessage() + ": " + dest);
+        } catch (Exception e) {
+            throw new JMSException("Unresolvable destination: " + e.getMessage() + ": " + dest);
         }
     }
 

@@ -16,6 +16,9 @@
  */
 package io.openwire.commands;
 
+import io.openwire.utils.DefaultUnresolvedDestinationTransformer;
+import io.openwire.utils.UnresolvedDestinationTransformer;
+
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
