@@ -155,6 +155,33 @@ public class OpenWireBytesMessage extends OpenWireMessage {
     }
 
     /**
+     * Provides a fast way to read the message contents.
+     *
+     * This method, unlike the base class getContent method will perform any
+     * needed decompression on a message that was received with a compressed
+     * payload.  The complete message body will then be read and returned in
+     * a byte array copy.  Changes to the returned byte array are not reflected
+     * in the underlying message contents.
+     *
+     * To read the message again it is necessary to call reset after calling
+     * this method.
+     *
+     * @return a copy of the message contents, uncompressed as needed.
+     *
+     * @throws JMSException if an error occurs while accessing the message payload.
+     */
+    public byte[] readFully() throws JMSException {
+        initializeReading();
+        if (length == 0) {
+            return new byte[0];
+        }
+
+        byte[] contents = new byte[length];
+        readBytes(contents);
+        return contents;
+    }
+
+    /**
      * Reads a <code>boolean</code> from the bytes message stream.
      *
      * @return the <code>boolean</code> value read
@@ -790,20 +817,20 @@ public class OpenWireBytesMessage extends OpenWireMessage {
     private void initializeReading() throws JMSException {
         if (dataIn == null) {
             try {
-            Buffer data = getContent();
-            if (data == null) {
-                data = new Buffer(new byte[] {}, 0, 0);
-            }
-            InputStream is = new ByteArrayInputStream(data);
-            if (isCompressed()) {
-                if (data.length != 0) {
-                    is = new ByteArrayInputStream(decompress(data));
+                Buffer data = getContent();
+                if (data == null) {
+                    data = new Buffer(new byte[] {}, 0, 0);
                 }
-            } else {
-                length = data.getLength();
-            }
+                InputStream is = new ByteArrayInputStream(data);
+                if (isCompressed()) {
+                    if (data.length != 0) {
+                        is = new ByteArrayInputStream(decompress(data));
+                    }
+                } else {
+                    length = data.getLength();
+                }
 
-            dataIn = new DataInputStream(is);
+                dataIn = new DataInputStream(is);
             } catch (IOException ioe) {
                 throw ExceptionSupport.create(ioe);
             }
