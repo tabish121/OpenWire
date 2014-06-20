@@ -70,7 +70,6 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
 
     @Test
     public void testTextMessageCompressionActiveMQ() throws Exception {
-
         sendAMQTextMessage(TEXT);
         ActiveMQTextMessage message = receiveAMQTextMessage();
         int compressedSize = message.getContent().getLength();
@@ -85,13 +84,12 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
 
     @Test
     public void testOpenWireTextMessageCompression() throws Exception {
-
         sendOpenWireTextMessage(TEXT);
-        OpenWireTextMessage message = receiveOpenWireTestMessage();
+        OpenWireTextMessage message = receiveOpenWireTextMessage();
         int compressedSize = message.getContent().getLength();
 
         sendOpenWireTextMessage(TEXT, false);
-        message = receiveOpenWireTestMessage();
+        message = receiveOpenWireTextMessage();
         int unCompressedSize = message.getContent().getLength();
 
         assertTrue("expected: compressed Size '" + compressedSize + "' < unCompressedSize '" + unCompressedSize + "'",
@@ -99,7 +97,35 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
     }
 
     @Test
-    public void testBytesMessageCompression() throws Exception {
+    public void testTextMessageCompressionActiveMQtoOpenWire() throws Exception {
+        sendAMQTextMessage(TEXT);
+        OpenWireTextMessage message = receiveOpenWireTextMessage();
+        int compressedSize = message.getContent().getLength();
+
+        sendAMQTextMessage(TEXT, false);
+        message = receiveOpenWireTextMessage();
+        int unCompressedSize = message.getContent().getLength();
+
+        assertTrue("expected: compressed Size '" + compressedSize + "' < unCompressedSize '" + unCompressedSize + "'",
+                   compressedSize < unCompressedSize);
+    }
+
+    @Test
+    public void testTextMessageCompressionOpenWireToActiveMQ() throws Exception {
+        sendOpenWireTextMessage(TEXT);
+        ActiveMQTextMessage message = receiveAMQTextMessage();
+        int compressedSize = message.getContent().getLength();
+
+        sendOpenWireTextMessage(TEXT, false);
+        message = receiveAMQTextMessage();
+        int unCompressedSize = message.getContent().getLength();
+
+        assertTrue("expected: compressed Size '" + compressedSize + "' < unCompressedSize '" + unCompressedSize + "'",
+                   compressedSize < unCompressedSize);
+    }
+
+    @Test
+    public void testBytesMessageCompressionActiveMQ() throws Exception {
         sendAMQBytesMessage(TEXT);
         ActiveMQBytesMessage message = receiveAMQBytesMessage();
         int compressedSize = message.getContent().getLength();
@@ -119,7 +145,7 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
     }
 
     @Test
-    public void testOpenWireBytesMessageCompression() throws Exception {
+    public void testBytesMessageCompressionOpenWire() throws Exception {
         sendOpenWireBytesMessage(TEXT);
         OpenWireBytesMessage message = receiveOpenWireBytesMessage();
         int compressedSize = message.getContent().getLength();
@@ -131,6 +157,46 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
         assertTrue(message.isCompressed());
 
         sendOpenWireBytesMessage(TEXT, false);
+        message = receiveOpenWireBytesMessage();
+        int unCompressedSize = message.getContent().getLength();
+
+        assertTrue("expected: compressed Size '" + compressedSize + "' < unCompressedSize '" + unCompressedSize + "'",
+                   compressedSize < unCompressedSize);
+    }
+
+    @Test
+    public void testBytesMessageCompressionActiveMQtoOpenWire() throws Exception {
+        sendAMQBytesMessage(TEXT);
+        OpenWireBytesMessage message = receiveOpenWireBytesMessage();
+        int compressedSize = message.getContent().getLength();
+        byte[] bytes = new byte[TEXT.getBytes("UTF8").length];
+        message.readBytes(bytes);
+        assertTrue(message.readBytes(new byte[255]) == -1);
+        String rcvString = new String(bytes, "UTF8");
+        assertEquals(TEXT, rcvString);
+        assertTrue(message.isCompressed());
+
+        sendAMQBytesMessage(TEXT, false);
+        message = receiveOpenWireBytesMessage();
+        int unCompressedSize = message.getContent().getLength();
+
+        assertTrue("expected: compressed Size '" + compressedSize + "' < unCompressedSize '" + unCompressedSize + "'",
+                   compressedSize < unCompressedSize);
+    }
+
+    @Test
+    public void testBytesMessageCompressionOpenWiretoActiveMQ() throws Exception {
+        sendAMQBytesMessage(TEXT);
+        OpenWireBytesMessage message = receiveOpenWireBytesMessage();
+        int compressedSize = message.getContent().getLength();
+        byte[] bytes = new byte[TEXT.getBytes("UTF8").length];
+        message.readBytes(bytes);
+        assertTrue(message.readBytes(new byte[255]) == -1);
+        String rcvString = new String(bytes, "UTF8");
+        assertEquals(TEXT, rcvString);
+        assertTrue(message.isCompressed());
+
+        sendAMQBytesMessage(TEXT, false);
         message = receiveOpenWireBytesMessage();
         int unCompressedSize = message.getContent().getLength();
 
@@ -272,7 +338,7 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
         disconnect();
     }
 
-    public OpenWireTextMessage receiveOpenWireTestMessage() throws Exception {
+    public OpenWireTextMessage receiveOpenWireTextMessage() throws Exception {
         connect();
         assertTrue(awaitConnected(10, TimeUnit.SECONDS));
         OpenWireConnection connection = new OpenWireConnection();
