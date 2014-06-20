@@ -34,13 +34,9 @@ import io.openwire.utils.OpenWireSession;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
-
-    @Rule public TestName name = new TestName();
 
     protected OpenWireConnection connectionId;
 
@@ -192,7 +188,7 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
             }
         }));
 
-        Message incoming = messages.get(0);
+        Message incoming = messages.poll();
         assertTrue(incoming instanceof OpenWireTextMessage);
         OpenWireTextMessage received = (OpenWireTextMessage) incoming;
         assertEquals("test", received.getText());

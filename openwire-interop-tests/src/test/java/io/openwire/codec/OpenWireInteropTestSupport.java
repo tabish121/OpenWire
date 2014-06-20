@@ -29,8 +29,9 @@ import io.openwire.util.TransportListener;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,8 @@ import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.broker.jmx.QueueViewMBean;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,10 +59,12 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWireInteropTestSupport.class);
 
+    @Rule public TestName name = new TestName();
+
     protected BrokerService brokerService;
 
     private TcpTransport transport;
-    private URI connectionURI;
+    protected URI connectionURI;
 
     private OpenWireFormatFactory factory;
     private OpenWireFormat wireFormat;
@@ -75,7 +80,7 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
         new ConcurrentHashMap<Integer, CountDownLatch>();
 
     protected Command latest;
-    protected final ArrayList<Message> messages = new ArrayList<Message>();
+    protected final Queue<Message> messages = new LinkedList<Message>();
 
     @Before
     public void setUp() throws Exception {
