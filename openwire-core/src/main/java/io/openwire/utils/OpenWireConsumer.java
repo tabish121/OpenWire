@@ -25,14 +25,34 @@ import io.openwire.commands.RemoveInfo;
  * Encapsulates an ActiveMQ compatible MessageConsumer ID using an OpenWire
  * ConsumerId generated from a parent Session instance.
  */
-public class OpenWireConsumer {
+public class OpenWireConsumer extends ConsumerInfo {
 
     private final OpenWireSession parent;
-    private final ConsumerId consumerId;
 
+    /**
+     * Creates a new OpenWireConsumer instance with the assigned consumerId.
+     *
+     * @param parent
+     *        the OpenWireSession that created this instance.
+     * @param consumerId
+     *        the assigned consumer Id for this Consumer.
+     */
     public OpenWireConsumer(OpenWireSession parent, ConsumerId consumerId) {
+        super(consumerId);
         this.parent = parent;
-        this.consumerId = consumerId;
+    }
+
+    /**
+     * Creates a new OpenWireConsumer from the given ConsumerInfo instance.
+     *
+     * @param parent
+     *        the OpenWireSession that created this instance.
+     * @param consumerInfo
+     *        the ConsumerInfo instance used to populate this one.
+     */
+    public OpenWireConsumer(OpenWireSession parent, ConsumerInfo consumerInfo) {
+        this.parent = parent;
+        consumerInfo.copy(this);
     }
 
     /**
@@ -40,13 +60,6 @@ public class OpenWireConsumer {
      */
     public OpenWireSession getParent() {
         return parent;
-    }
-
-    /**
-     * @return the consumerId managed by this OpenWireConsumerId instance.
-     */
-    public ConsumerId getConsumerId() {
-        return consumerId;
     }
 
     /**
@@ -70,9 +83,7 @@ public class OpenWireConsumer {
      * @return a new ConsumerInfo instance that can be used to register a remote Consumer.
      */
     public ConsumerInfo createConsumerInfo(OpenWireDestination destination) {
-        ConsumerInfo info = new ConsumerInfo(getConsumerId());
-        info.setDestination(destination);
-        return info;
+        return this.copy();
     }
 
     /**

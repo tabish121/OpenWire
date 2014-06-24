@@ -29,9 +29,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * Encapsulates an ActiveMQ compatible OpenWire Producer ID and provides
  * functionality used to generate message IDs for the producer.
  */
-public class OpenWireProducer {
+public class OpenWireProducer extends ProducerInfo {
 
-    private final ProducerId producerId;
     private final OpenWireSession parent;
 
     private final AtomicLong messageSequence = new AtomicLong(1);
@@ -45,15 +44,21 @@ public class OpenWireProducer {
      *        the ProducerId assigned to this instance.
      */
     public OpenWireProducer(OpenWireSession parent, ProducerId producerId) {
+        super(producerId);
         this.parent = parent;
-        this.producerId = producerId;
     }
 
     /**
-     * @return the producerId
+     * Creates a new instance with the given parent Session Id and copy the given ProducerInfo
+     *
+     * @param parent
+     *        the OpenWireSessionId that is the parent of the new Producer.
+     * @param producerInfo
+     *        the ProducerInfo used to populate this instance.
      */
-    public ProducerId getProducerId() {
-        return producerId;
+    public OpenWireProducer(OpenWireSession parent, ProducerInfo producerInfo) {
+        this.parent = parent;
+        producerInfo.copy(this);
     }
 
     /**
@@ -93,9 +98,7 @@ public class OpenWireProducer {
      * @return a new ProducerInfo instance that can be used to register a remote producer.
      */
     public ProducerInfo createProducerInfo(OpenWireDestination destination) {
-        ProducerInfo info = new ProducerInfo(getProducerId());
-        info.setDestination(destination);
-        return info;
+        return this.copy();
     }
 
     /**

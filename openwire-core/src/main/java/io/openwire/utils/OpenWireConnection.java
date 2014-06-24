@@ -31,24 +31,16 @@ import java.util.concurrent.atomic.AtomicLong;
  * of ConnectionId objects and provides methods for creating OpenWireSession instances
  * that are children of this Connection.
  */
-public class OpenWireConnection {
+public class OpenWireConnection extends ConnectionInfo {
 
     private static final OpenWireIdGenerator idGenerator = new OpenWireIdGenerator();
 
-    private final ConnectionId connectionId;
     private SessionId connectionSessionId;
 
     private final AtomicLong sessionIdGenerator = new AtomicLong(1);
     private final AtomicLong consumerIdGenerator = new AtomicLong(1);
     private final AtomicLong tempDestinationIdGenerator = new AtomicLong(1);
     private final AtomicLong localTransactionIdGenerator = new AtomicLong(1);
-
-    private String clientId;
-    private String clientIp;
-    private String userName;
-    private String password;
-    private boolean manageable;
-    private boolean faultTolerant = false;
 
     /**
      * Creates a fixed OpenWire Connection Id instance.
@@ -77,6 +69,7 @@ public class OpenWireConnection {
         this.connectionId = connectionId;
     }
 
+    @Override
     public ConnectionId getConnectionId() {
         return connectionId;
     }
@@ -144,16 +137,7 @@ public class OpenWireConnection {
      * @return a new ConnectionInfo that contains the proper connection Id.
      */
     public ConnectionInfo createConnectionInfo() {
-        ConnectionInfo info = new ConnectionInfo(getConnectionId());
-
-        info.setClientId(getClientId());
-        info.setClientIp(getClientIp());
-        info.setUserName(getUserName());
-        info.setPassword(getPassword());
-        info.setManageable(isManageable());
-        info.setFaultTolerant(isFaultTolerant());
-
-        return info;
+        return this.copy();
     }
 
     /**
@@ -173,109 +157,5 @@ public class OpenWireConnection {
      */
     public OpenWireSession createOpenWireSession() {
         return new OpenWireSession(connectionId, sessionIdGenerator.getAndIncrement());
-    }
-
-    /**
-     * @return the client ID that the connection is assigned.
-     */
-    public String getClientId() {
-        return clientId;
-    }
-
-    /**
-     * Sets the client ID that the connection is assigned.
-     *
-     * @param clientId
-     *        the clientId to set
-     */
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
-    /**
-     * @return the IP Address for the connection being created.
-     */
-    public String getClientIp() {
-        return clientIp;
-    }
-
-    /**
-     * Sets the IP Address that the connection is using to communicate with the
-     * remote broker instance.  This is generally the host name of the client.
-     *
-     * @param clientIp
-     *        the clientIp to set
-     */
-    public void setClientIp(String clientIp) {
-        this.clientIp = clientIp;
-    }
-
-    /**
-     * @return the User Name used to authenticate this connection.
-     */
-    public String getUserName() {
-        return userName;
-    }
-
-    /**
-     * Sets the User Name used for Authentication and Authorization of this Connection.
-     *
-     * @param userName
-     *        the userName to set
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    /**
-     * @return the password assigned to this connection.
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the password used in combination with the set User Name value.
-     *
-     * @param password
-     *        the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /**
-     * @return the manageable flag for this connection.
-     */
-    public boolean isManageable() {
-        return manageable;
-    }
-
-    /**
-     * Sets whether this Connection is manageable by the remote Broker.
-     *
-     * @param manageable
-     *        configures whether this connection is marked as managable.
-     */
-    public void setManageable(boolean manageable) {
-        this.manageable = manageable;
-    }
-
-    /**
-     * @return the faultTolerant flag for this connection.
-     */
-    public boolean isFaultTolerant() {
-        return faultTolerant;
-    }
-
-    /**
-     * Sets whether this connection is fault tolerant and will try to reconnect on
-     * loss of connectivity with the remote broker.
-     *
-     * @param faultTolerant
-     *        the faultTolerant state of this connection.
-     */
-    public void setFaultTolerant(boolean faultTolerant) {
-        this.faultTolerant = faultTolerant;
     }
 }

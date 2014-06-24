@@ -29,9 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Encapsulates an ActiveMQ compatible OpenWire Session ID and provides methods
  * for creating consumer and producer ID objects that are children of this session.
  */
-public class OpenWireSession {
-
-    private final SessionId sessionId;
+public class OpenWireSession extends SessionInfo {
 
     private final AtomicLong consumerIdGenerator = new AtomicLong(1);
     private final AtomicLong producerIdGenerator = new AtomicLong(1);
@@ -63,6 +61,7 @@ public class OpenWireSession {
     /**
      * @return the fixed SessionId of this OpenWireSessionId instance.
      */
+    @Override
     public SessionId getSessionId() {
         return sessionId;
     }
