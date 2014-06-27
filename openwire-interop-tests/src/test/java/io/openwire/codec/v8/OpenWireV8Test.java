@@ -18,10 +18,17 @@ package io.openwire.codec.v8;
 
 import io.openwire.codec.OpenWireInteropTests;
 
-public class OpenWireV9Test extends OpenWireInteropTests {
+public class OpenWireV8Test extends OpenWireInteropTests {
+
+    /**
+     * @param tightEncodingEnabled
+     */
+    public OpenWireV8Test(boolean tightEncodingEnabled) {
+        super(tightEncodingEnabled);
+    }
 
     @Override
     protected int getOpenWireVersion() {
-        return 9;
+        return 8;
     }
 }

@@ -91,7 +91,7 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
         factory = new OpenWireFormatFactory();
         factory.setVersion(getOpenWireVersion());
         factory.setCacheEnabled(false);
-        factory.setTightEncodingEnabled(false);
+        factory.setTightEncodingEnabled(isTightEncodingEnabled());
 
         wireFormat = factory.createWireFormat();
     }
@@ -107,6 +107,8 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
     }
 
     protected abstract int getOpenWireVersion();
+
+    protected abstract boolean isTightEncodingEnabled();
 
     protected void connect() throws Exception {
         connected = new CountDownLatch(1);
@@ -147,7 +149,7 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
         brokerService.setDeleteAllMessagesOnStartup(true);
         brokerService.setUseJmx(true);
 
-        TransportConnector connector = brokerService.addConnector("tcp://0.0.0.0:0");
+        TransportConnector connector = brokerService.addConnector("tcp://0.0.0.0:0?transport.trace=true&trace=true");
         connectionURI = connector.getPublishableConnectURI();
         LOG.debug("Using openwire port: {}", connectionURI);
         return brokerService;

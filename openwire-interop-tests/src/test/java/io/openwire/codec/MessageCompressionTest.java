@@ -436,4 +436,9 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
     protected int getOpenWireVersion() {
         return 10;
     }
+
+    @Override
+    protected boolean isTightEncodingEnabled() {
+        return false;
+    }
 }

@@ -20,6 +20,13 @@ import io.openwire.codec.OpenWireInteropTests;
 
 public class OpenWireV2Test extends OpenWireInteropTests {
 
+    /**
+     * @param tightEncodingEnabled
+     */
+    public OpenWireV2Test(boolean tightEncodingEnabled) {
+        super(tightEncodingEnabled);
+    }
+
     @Override
     protected int getOpenWireVersion() {
         return 2;
