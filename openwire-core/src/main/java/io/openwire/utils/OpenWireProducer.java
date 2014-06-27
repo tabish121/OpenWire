@@ -92,6 +92,15 @@ public class OpenWireProducer extends ProducerInfo {
     /**
      * Factory method for creating a ProducerInfo to wrap this instance's ProducerId.
      *
+     * @return a new ProducerInfo instance that can be used to register a remote producer.
+     */
+    public ProducerInfo createProducerInfo() {
+        return this.copy();
+    }
+
+    /**
+     * Factory method for creating a ProducerInfo to wrap this instance's ProducerId.
+     *
      * @param destination
      *        the target destination for this ProducerInfo instance.
      *

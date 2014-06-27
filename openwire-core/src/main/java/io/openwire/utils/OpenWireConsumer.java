@@ -77,6 +77,15 @@ public class OpenWireConsumer extends ConsumerInfo {
     /**
      * Factory method for creating a ConsumerInfo to wrap this instance's ConsumerId.
      *
+     * @return a new ConsumerInfo instance that can be used to register a remote Consumer.
+     */
+    public ConsumerInfo createConsumerInfo() {
+        return this.copy();
+    }
+
+    /**
+     * Factory method for creating a ConsumerInfo to wrap this instance's ConsumerId.
+     *
      * @param destination
      *        the target destination for this ProducerInfo instance.
      *
