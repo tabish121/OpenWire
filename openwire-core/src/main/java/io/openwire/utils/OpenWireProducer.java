@@ -98,6 +98,7 @@ public class OpenWireProducer extends ProducerInfo {
      * @return a new ProducerInfo instance that can be used to register a remote producer.
      */
     public ProducerInfo createProducerInfo(OpenWireDestination destination) {
+        this.setDestination(destination);
         return this.copy();
     }
 

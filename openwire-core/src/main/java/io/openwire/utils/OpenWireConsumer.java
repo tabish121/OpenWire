@@ -83,6 +83,7 @@ public class OpenWireConsumer extends ConsumerInfo {
      * @return a new ConsumerInfo instance that can be used to register a remote Consumer.
      */
     public ConsumerInfo createConsumerInfo(OpenWireDestination destination) {
+        this.setDestination(destination);
         return this.copy();
     }
 
