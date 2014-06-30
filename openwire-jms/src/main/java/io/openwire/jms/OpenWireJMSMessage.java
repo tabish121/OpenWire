@@ -29,6 +29,7 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageFormatException;
+import javax.jms.MessageNotWriteableException;
 
 /**
  * A JMS Message implementation that extends the basic OpenWireMessage instance
@@ -40,6 +41,8 @@ public class OpenWireJMSMessage implements Message {
     private final OpenWireMessage message;
 
     private Callable<Void> acknowledgeCallback;
+    private boolean readOnlyBody;
+    private boolean readOnlyProperties;
 
     /**
      * Creates a new instance that wraps a new OpenWireMessage isntance.
@@ -316,54 +319,63 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public void setBooleanProperty(String name, boolean value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void setByteProperty(String name, byte value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void setShortProperty(String name, short value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void setIntProperty(String name, int value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void setLongProperty(String name, long value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void setFloatProperty(String name, float value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void setDoubleProperty(String name, double value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void setStringProperty(String name, String value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void setObjectProperty(String name, Object value) throws JMSException {
+        checkReadOnlyProperties();
         // TODO Auto-generated method stub
 
     }
@@ -400,5 +412,47 @@ public class OpenWireJMSMessage implements Message {
      */
     public void setAcknowledgeCallback(Callable<Void> acknowledgeCallback) {
         this.acknowledgeCallback = acknowledgeCallback;
+    }
+
+    /**
+     * @return true if the body is in read only mode.
+     */
+    public boolean isReadOnlyBody() {
+        return readOnlyBody;
+    }
+
+    /**
+     * @param readOnlyBody
+     *        sets if the message body is in read-only mode.
+     */
+    public void setReadOnlyBody(boolean readOnlyBody) {
+        this.readOnlyBody = readOnlyBody;
+    }
+
+    /**
+     * @return true if the message properties are in read-only mode.
+     */
+    public boolean isReadOnlyProperties() {
+        return readOnlyProperties;
+    }
+
+    /**
+     * @param readOnlyProperties
+     *        sets if the message properties are in read-only mode.
+     */
+    public void setReadOnlyProperties(boolean readOnlyProperties) {
+        this.readOnlyProperties = readOnlyProperties;
+    }
+
+    private void checkReadOnlyProperties() throws MessageNotWriteableException {
+        if (readOnlyProperties) {
+            throw new MessageNotWriteableException("Message properties are read-only");
+        }
+    }
+
+    protected void checkReadOnlyBody() throws MessageNotWriteableException {
+        if (readOnlyBody) {
+            throw new MessageNotWriteableException("Message body is read-only");
+        }
     }
 }
