@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwire.jms;
+package io.openwire.jms;
 
-import io.openwire.commands.OpenWireStreamMessage;
+import io.openwire.commands.OpenWireBytesMessage;
 
+import javax.jms.BytesMessage;
 import javax.jms.JMSException;
-import javax.jms.StreamMessage;
 
 /**
- * Wrapper class that provides StreamMessage compliant mappings to the OpenWireStreamMessage
+ * Wrapper class that provides ByteMessage compliant mappings to the OpenWireBytesMessage
  */
-public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements StreamMessage {
+public class OpenWireJMSBytesMessage extends OpenWireJMSMessage implements BytesMessage {
 
-    private final OpenWireStreamMessage message;
+    private final OpenWireBytesMessage message;
 
     /**
      * Creates a new instance that wraps a new OpenWireMessage instance.
      */
-    public OpenWireJMSStreamMessage() {
-        this(new OpenWireStreamMessage());
+    public OpenWireJMSBytesMessage() {
+        this(new OpenWireBytesMessage());
     }
 
     /**
@@ -41,8 +41,13 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
      * @param message
      *        the OpenWireMessage to wrap.
      */
-    public OpenWireJMSStreamMessage(OpenWireStreamMessage message) {
+    public OpenWireJMSBytesMessage(OpenWireBytesMessage message) {
         this.message = message;
+    }
+
+    @Override
+    public long getBodyLength() throws JMSException {
+        return message.getBodyLength();
     }
 
     @Override
@@ -58,7 +63,19 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
     }
 
     @Override
+    public int readUnsignedByte() throws JMSException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
     public short readShort() throws JMSException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int readUnsignedShort() throws JMSException {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -94,7 +111,7 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
     }
 
     @Override
-    public String readString() throws JMSException {
+    public String readUTF() throws JMSException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -106,9 +123,9 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
     }
 
     @Override
-    public Object readObject() throws JMSException {
+    public int readBytes(byte[] value, int length) throws JMSException {
         // TODO Auto-generated method stub
-        return null;
+        return 0;
     }
 
     @Override
@@ -160,7 +177,7 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
     }
 
     @Override
-    public void writeString(String value) throws JMSException {
+    public void writeUTF(String value) throws JMSException {
         // TODO Auto-generated method stub
 
     }

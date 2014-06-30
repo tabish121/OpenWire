@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwire.jms.utils;
+package io.openwire.jms.utils;
 
 import io.openwire.commands.OpenWireMessage;
 import io.openwire.commands.TransactionId;

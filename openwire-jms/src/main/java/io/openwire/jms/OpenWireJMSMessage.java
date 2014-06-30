@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwire.jms;
+package io.openwire.jms;
 
 import io.openwire.commands.OpenWireDestination;
 import io.openwire.commands.OpenWireMessage;
+import io.openwire.jms.utils.TypeConversionSupport;
 import io.openwire.utils.ExceptionSupport;
 
 import java.util.Enumeration;
@@ -27,6 +28,7 @@ import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageFormatException;
 
 /**
  * A JMS Message implementation that extends the basic OpenWireMessage instance
@@ -180,14 +182,23 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public boolean propertyExists(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return false;
+        return message.propertyExists(name);
     }
 
     @Override
     public boolean getBooleanProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return false;
+        Object value = getObjectProperty(name);
+
+        if (value == null) {
+            return false;
+        }
+
+        Boolean rc = (Boolean) TypeConversionSupport.convert(value, Boolean.class);
+        if (rc == null) {
+            throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a boolean");
+        }
+
+        return rc.booleanValue();
     }
 
     @Override

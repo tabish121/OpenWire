@@ -14,46 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwire.jms;
+package io.openwire.jms;
 
-import io.openwire.commands.OpenWireObjectMessage;
-
-import java.io.Serializable;
+import io.openwire.commands.OpenWireTextMessage;
 
 import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
 
 /**
- * Wrapper class that provides ObjectMessage compliant mappings to the OpenWireObjectMessage
+ * A wrapper around an OpenWireTextMessage.
  */
-public class OpenWireJMSObjectMessage extends OpenWireJMSMessage implements ObjectMessage {
+public class OpenWireJMSTextMessage extends OpenWireJMSMessage implements TextMessage {
 
-    private final OpenWireObjectMessage message;
+    private final OpenWireTextMessage message;
 
     /**
-     * Creates a new instance that wraps a new OpenWireMessage instance.
+     * Creates a new instance that wraps a new OpenWireJMSTextMessage instance.
      */
-    public OpenWireJMSObjectMessage() {
-        this(new OpenWireObjectMessage());
+    public OpenWireJMSTextMessage() {
+        this(new OpenWireTextMessage());
     }
 
     /**
-     * Creates a new instance that wraps the given OpenWireMessage
+     * Creates a new instance of an OpenWireJMSTextMessage that wraps the
+     * given OpenWireTextMessage instance.
      *
      * @param message
-     *        the OpenWireMessage to wrap.
+     *        the message to wrap.
      */
-    public OpenWireJMSObjectMessage(OpenWireObjectMessage message) {
+    public OpenWireJMSTextMessage(OpenWireTextMessage message) {
+        super(message);
         this.message = message;
     }
 
     @Override
-    public void setObject(Serializable object) throws JMSException {
-        message.setObject(object);
+    public void setText(String text) throws JMSException {
+        message.setText(text);
     }
 
     @Override
-    public Serializable getObject() throws JMSException {
-        return message.getObject();
+    public String getText() throws JMSException {
+        return message.getText();
     }
 }

@@ -14,46 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwire.jms;
+package io.openwire.jms;
 
-import io.openwire.commands.OpenWireTextMessage;
+import io.openwire.commands.OpenWireObjectMessage;
+
+import java.io.Serializable;
 
 import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import javax.jms.ObjectMessage;
 
 /**
- * A wrapper around an OpenWireTextMessage.
+ * Wrapper class that provides ObjectMessage compliant mappings to the OpenWireObjectMessage
  */
-public class OpenWireJMSTextMessage extends OpenWireJMSMessage implements TextMessage {
+public class OpenWireJMSObjectMessage extends OpenWireJMSMessage implements ObjectMessage {
 
-    private final OpenWireTextMessage message;
+    private final OpenWireObjectMessage message;
 
     /**
-     * Creates a new instance that wraps a new OpenWireJMSTextMessage instance.
+     * Creates a new instance that wraps a new OpenWireMessage instance.
      */
-    public OpenWireJMSTextMessage() {
-        this(new OpenWireTextMessage());
+    public OpenWireJMSObjectMessage() {
+        this(new OpenWireObjectMessage());
     }
 
     /**
-     * Creates a new instance of an OpenWireJMSTextMessage that wraps the
-     * given OpenWireTextMessage instance.
+     * Creates a new instance that wraps the given OpenWireMessage
      *
      * @param message
-     *        the message to wrap.
+     *        the OpenWireMessage to wrap.
      */
-    public OpenWireJMSTextMessage(OpenWireTextMessage message) {
-        super(message);
+    public OpenWireJMSObjectMessage(OpenWireObjectMessage message) {
         this.message = message;
     }
 
     @Override
-    public void setText(String text) throws JMSException {
-        message.setText(text);
+    public void setObject(Serializable object) throws JMSException {
+        message.setObject(object);
     }
 
     @Override
-    public String getText() throws JMSException {
-        return message.getText();
+    public Serializable getObject() throws JMSException {
+        return message.getObject();
     }
 }

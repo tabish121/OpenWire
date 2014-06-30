@@ -14,25 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwire.jms;
+package io.openwire.jms;
 
-import io.openwire.commands.OpenWireBytesMessage;
+import io.openwire.commands.OpenWireMapMessage;
 
-import javax.jms.BytesMessage;
+import java.util.Enumeration;
+
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
 
 /**
- * Wrapper class that provides ByteMessage compliant mappings to the OpenWireBytesMessage
+ * Wrapper class that provides MapMessage compliant mappings to the OpenWireMapMessage
  */
-public class OpenWireJMSBytesMessage extends OpenWireJMSMessage implements BytesMessage {
+public class OpenWireJMSMapMessage extends OpenWireJMSMessage implements MapMessage {
 
-    private final OpenWireBytesMessage message;
+    private final OpenWireMapMessage message;
 
     /**
      * Creates a new instance that wraps a new OpenWireMessage instance.
      */
-    public OpenWireJMSBytesMessage() {
-        this(new OpenWireBytesMessage());
+    public OpenWireJMSMapMessage() {
+        this(new OpenWireMapMessage());
     }
 
     /**
@@ -41,167 +43,156 @@ public class OpenWireJMSBytesMessage extends OpenWireJMSMessage implements Bytes
      * @param message
      *        the OpenWireMessage to wrap.
      */
-    public OpenWireJMSBytesMessage(OpenWireBytesMessage message) {
+    public OpenWireJMSMapMessage(OpenWireMapMessage message) {
         this.message = message;
     }
 
     @Override
-    public long getBodyLength() throws JMSException {
-        return message.getBodyLength();
-    }
-
-    @Override
-    public boolean readBoolean() throws JMSException {
+    public boolean getBoolean(String name) throws JMSException {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public byte readByte() throws JMSException {
+    public byte getByte(String name) throws JMSException {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public int readUnsignedByte() throws JMSException {
+    public short getShort(String name) throws JMSException {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public short readShort() throws JMSException {
+    public char getChar(String name) throws JMSException {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public int readUnsignedShort() throws JMSException {
+    public int getInt(String name) throws JMSException {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public char readChar() throws JMSException {
+    public long getLong(String name) throws JMSException {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public int readInt() throws JMSException {
+    public float getFloat(String name) throws JMSException {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public long readLong() throws JMSException {
+    public double getDouble(String name) throws JMSException {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public float readFloat() throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public double readDouble() throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public String readUTF() throws JMSException {
+    public String getString(String name) throws JMSException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public int readBytes(byte[] value) throws JMSException {
+    public byte[] getBytes(String name) throws JMSException {
         // TODO Auto-generated method stub
-        return 0;
+        return null;
     }
 
     @Override
-    public int readBytes(byte[] value, int length) throws JMSException {
+    public Object getObject(String name) throws JMSException {
         // TODO Auto-generated method stub
-        return 0;
+        return null;
     }
 
     @Override
-    public void writeBoolean(boolean value) throws JMSException {
+    public Enumeration<String> getMapNames() throws JMSException {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
     @Override
-    public void writeByte(byte value) throws JMSException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void writeShort(short value) throws JMSException {
+    public void setBoolean(String name, boolean value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeChar(char value) throws JMSException {
+    public void setByte(String name, byte value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeInt(int value) throws JMSException {
+    public void setShort(String name, short value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeLong(long value) throws JMSException {
+    public void setChar(String name, char value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeFloat(float value) throws JMSException {
+    public void setInt(String name, int value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeDouble(double value) throws JMSException {
+    public void setLong(String name, long value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeUTF(String value) throws JMSException {
+    public void setFloat(String name, float value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeBytes(byte[] value) throws JMSException {
+    public void setDouble(String name, double value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeBytes(byte[] value, int offset, int length) throws JMSException {
+    public void setString(String name, String value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeObject(Object value) throws JMSException {
+    public void setBytes(String name, byte[] value) throws JMSException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void reset() throws JMSException {
-        message.reset();
+    public void setBytes(String name, byte[] value, int offset, int length) throws JMSException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setObject(String name, Object value) throws JMSException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean itemExists(String name) throws JMSException {
+        return message.itemExists(name);
     }
 }
