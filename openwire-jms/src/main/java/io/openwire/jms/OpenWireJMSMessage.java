@@ -203,44 +203,104 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public byte getByteProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
+        Object value = getObjectProperty(name);
+        if (value == null) {
+            throw new NumberFormatException("property " + name + " was null");
+        }
+        Byte rc = (Byte) TypeConversionSupport.convert(value, Byte.class);
+        if (rc == null) {
+            throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a byte");
+        }
+        return rc.byteValue();
     }
 
     @Override
     public short getShortProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
+        Object value = getObjectProperty(name);
+        if (value == null) {
+            throw new NumberFormatException("property " + name + " was null");
+        }
+        Short rc = (Short) TypeConversionSupport.convert(value, Short.class);
+        if (rc == null) {
+            throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a short");
+        }
+        return rc.shortValue();
     }
 
     @Override
     public int getIntProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
+        Object value = getObjectProperty(name);
+        if (value == null) {
+            throw new NumberFormatException("property " + name + " was null");
+        }
+        Integer rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
+        if (rc == null) {
+            throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as an integer");
+        }
+        return rc.intValue();
     }
 
     @Override
     public long getLongProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
+        Object value = getObjectProperty(name);
+        if (value == null) {
+            throw new NumberFormatException("property " + name + " was null");
+        }
+        Long rc = (Long) TypeConversionSupport.convert(value, Long.class);
+        if (rc == null) {
+            throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a long");
+        }
+        return rc.longValue();
     }
 
     @Override
     public float getFloatProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
+        Object value = getObjectProperty(name);
+        if (value == null) {
+            throw new NullPointerException("property " + name + " was null");
+        }
+        Float rc = (Float) TypeConversionSupport.convert(value, Float.class);
+        if (rc == null) {
+            throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a float");
+        }
+        return rc.floatValue();
     }
 
     @Override
     public double getDoubleProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
+        Object value = getObjectProperty(name);
+        if (value == null) {
+            throw new NullPointerException("property " + name + " was null");
+        }
+        Double rc = (Double) TypeConversionSupport.convert(value, Double.class);
+        if (rc == null) {
+            throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a double");
+        }
+        return rc.doubleValue();
     }
 
     @Override
     public String getStringProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return null;
+        Object value = null;
+
+        // Always go first to the OpenWire Message field before checking in the
+        // application properties for any other versions.
+        if (name.equals("JMSXUserID")) {
+            value = message.getUserId();
+            if (value == null) {
+                value = getObjectProperty(name);
+            }
+        } else {
+            value = getObjectProperty(name);
+        }
+        if (value == null) {
+            return null;
+        }
+        String rc = (String) TypeConversionSupport.convert(value, String.class);
+        if (rc == null) {
+            throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a String");
+        }
+        return rc;
     }
 
     @Override
@@ -251,8 +311,7 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public Enumeration<?> getPropertyNames() throws JMSException {
-        // TODO Auto-generated method stub
-        return null;
+        return message.getPropertyNames();
     }
 
     @Override
