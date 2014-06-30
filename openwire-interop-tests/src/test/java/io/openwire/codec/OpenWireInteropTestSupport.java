@@ -67,7 +67,7 @@ public abstract class OpenWireInteropTestSupport implements TransportListener {
     protected URI connectionURI;
 
     private OpenWireFormatFactory factory;
-    private OpenWireFormat wireFormat;
+    protected OpenWireFormat wireFormat;
 
     private CountDownLatch connected;
 

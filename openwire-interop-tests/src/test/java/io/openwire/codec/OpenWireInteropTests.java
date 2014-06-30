@@ -17,6 +17,7 @@
 package io.openwire.codec;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import io.openwire.commands.ConnectionInfo;
 import io.openwire.commands.ConsumerInfo;
@@ -40,9 +41,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(Parameterized.class)
 public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpenWireInteropTests.class);
 
     protected OpenWireConnection connectionId;
     protected boolean tightEncodingEnabled;
@@ -53,7 +58,7 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { Boolean.FALSE } });
+        return Arrays.asList(new Object[][] { { Boolean.FALSE }, { Boolean.TRUE } });
     }
 
     @Override
@@ -73,6 +78,14 @@ public abstract class OpenWireInteropTests extends OpenWireInteropTestSupport {
         connect();
         assertTrue(awaitConnected(10, TimeUnit.SECONDS));
         assertEquals(getOpenWireVersion(), getRemoteWireFormatInfo().getVersion());
+
+        if (isTightEncodingEnabled()) {
+            LOG.info("Should be using tight encoding: are we? {}", wireFormat.isTightEncodingEnabled());
+            assertTrue(wireFormat.isTightEncodingEnabled());
+        } else {
+            LOG.info("Should not be using tight encoding: are we? {}", wireFormat.isTightEncodingEnabled());
+            assertFalse(wireFormat.isTightEncodingEnabled());
+        }
     }
 
     @Test(timeout = 60000)
