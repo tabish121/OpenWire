@@ -18,8 +18,10 @@ package org.openwire.jms;
 
 import io.openwire.commands.OpenWireDestination;
 import io.openwire.commands.OpenWireMessage;
+import io.openwire.utils.ExceptionSupport;
 
 import java.util.Enumeration;
+import java.util.concurrent.Callable;
 
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -34,6 +36,8 @@ import javax.jms.Message;
 public class OpenWireJMSMessage implements Message {
 
     private final OpenWireMessage message;
+
+    private Callable<Void> acknowledgeCallback;
 
     /**
      * Creates a new instance that wraps a new OpenWireMessage isntance.
@@ -296,12 +300,35 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public void acknowledge() throws JMSException {
-        // TODO Auto-generated method stub
-
+        if (acknowledgeCallback != null) {
+            try {
+                acknowledgeCallback.call();
+            } catch (Exception e) {
+                throw ExceptionSupport.create(e);
+            }
+        }
     }
 
     @Override
     public void clearBody() throws JMSException {
         message.clearBody();
+    }
+
+    /**
+     * @return the acknowledge callback instance set on this message.
+     */
+    public Callable<Void> getAcknowledgeCallback() {
+        return acknowledgeCallback;
+    }
+
+    /**
+     * Sets the Callable instance that is invoked when the client calls the JMS Message
+     * acknowledge method.
+     *
+     * @param acknowledgeCallback
+     *        the acknowledgeCallback to set on this message.
+     */
+    public void setAcknowledgeCallback(Callable<Void> acknowledgeCallback) {
+        this.acknowledgeCallback = acknowledgeCallback;
     }
 }
