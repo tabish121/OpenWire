@@ -133,4 +133,9 @@ public class ProducerInfo extends BaseCommand {
     public void setWindowSize(int windowSize) {
         this.windowSize = windowSize;
     }
+
+    @Override
+    public boolean isProducerInfo() {
+        return true;
+    }
 }

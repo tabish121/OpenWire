@@ -51,6 +51,14 @@ public interface Command extends DataStructure {
 
     boolean isConnectionControl();
 
+    boolean isConnectionInfo();
+
+    boolean isSessionInfo();
+
+    boolean isProducerInfo();
+
+    boolean isConsumerInfo();
+
     Response visit(CommandVisitor visitor) throws Exception;
 
 }

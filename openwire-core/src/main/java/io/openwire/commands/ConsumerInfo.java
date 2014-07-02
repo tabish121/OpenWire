@@ -439,4 +439,9 @@ public class ConsumerInfo extends BaseCommand {
             }
         }
     }
+
+    @Override
+    public boolean isConsumerInfo() {
+        return true;
+    }
 }

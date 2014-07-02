@@ -215,4 +215,14 @@ public class ConnectionInfo extends BaseCommand {
     public void setClientIp(String clientIp) {
         this.clientIp = clientIp;
     }
+
+    @Override
+    public String toString() {
+        return "ConnectionInfo: { " + getConnectionId() + " }";
+    }
+
+    @Override
+    public boolean isConnectionInfo() {
+        return true;
+    }
 }

@@ -373,4 +373,24 @@ public class WireFormatInfo implements Command, MarshallAware {
     public boolean isConnectionControl() {
         return false;
     }
+
+    @Override
+    public boolean isConnectionInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isSessionInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isProducerInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isConsumerInfo() {
+        return false;
+    }
 }

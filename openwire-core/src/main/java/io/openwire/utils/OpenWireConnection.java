@@ -125,11 +125,6 @@ public class OpenWireConnection extends ConnectionInfo {
         return connectionId.getValue() + ":" + tempDestinationIdGenerator.getAndIncrement();
     }
 
-    @Override
-    public String toString() {
-        return connectionId.toString();
-    }
-
     /**
      * Factory method for creating a ConnectionInfo command that contains the connection
      * ID from this OpenWireConnection instance.

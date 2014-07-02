@@ -109,4 +109,24 @@ public abstract class BaseCommand implements Command {
     public boolean isConnectionControl() {
         return false;
     }
+
+    @Override
+    public boolean isConnectionInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isSessionInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isProducerInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isConsumerInfo() {
+        return false;
+    }
 }

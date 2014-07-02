@@ -128,6 +128,26 @@ public class PartialCommand implements Command {
     }
 
     @Override
+    public boolean isConnectionInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isSessionInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isProducerInfo() {
+        return false;
+    }
+
+    @Override
+    public boolean isConsumerInfo() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         int size = 0;
         if (data != null) {

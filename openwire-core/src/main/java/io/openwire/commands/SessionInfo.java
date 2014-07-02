@@ -63,4 +63,9 @@ public class SessionInfo extends BaseCommand {
     public Response visit(CommandVisitor visitor) throws Exception {
         return visitor.processAddSession(this);
     }
+
+    @Override
+    public boolean isSessionInfo() {
+        return true;
+    }
 }
