@@ -16,8 +16,11 @@
  */
 package io.openwire.jms;
 
+import io.openwire.codec.OpenWireConstants;
 import io.openwire.commands.OpenWireDestination;
 import io.openwire.commands.OpenWireMessage;
+import io.openwire.jms.utils.OpenWireMessagePropertyGetter;
+import io.openwire.jms.utils.OpenWireMessagePropertySetter;
 import io.openwire.jms.utils.TypeConversionSupport;
 import io.openwire.utils.ExceptionSupport;
 
@@ -30,6 +33,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageFormatException;
 import javax.jms.MessageNotWriteableException;
+
+import org.fusesource.hawtbuf.UTF8Buffer;
 
 /**
  * A JMS Message implementation that extends the basic OpenWireMessage instance
@@ -308,8 +313,11 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public Object getObjectProperty(String name) throws JMSException {
-        // TODO Auto-generated method stub
-        return null;
+        if (name == null) {
+            throw new NullPointerException("Property name cannot be null");
+        }
+
+        return new OpenWireMessagePropertyGetter(name).get(message);
     }
 
     @Override
@@ -319,65 +327,68 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public void setBooleanProperty(String name, boolean value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
-
+        setObjectProperty(name, Boolean.valueOf(value), true);
     }
 
     @Override
     public void setByteProperty(String name, byte value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
-
+        setObjectProperty(name, Byte.valueOf(value), true);
     }
 
     @Override
     public void setShortProperty(String name, short value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
-
+        setObjectProperty(name, Short.valueOf(value), true);
     }
 
     @Override
     public void setIntProperty(String name, int value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
-
+        setObjectProperty(name, Integer.valueOf(value), true);
     }
 
     @Override
     public void setLongProperty(String name, long value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
-
+        setObjectProperty(name, Long.valueOf(value), true);
     }
 
     @Override
     public void setFloatProperty(String name, float value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
-
+        setObjectProperty(name, Float.valueOf(value), true);
     }
 
     @Override
     public void setDoubleProperty(String name, double value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
-
+        setObjectProperty(name, Double.valueOf(value), true);
     }
 
     @Override
     public void setStringProperty(String name, String value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
-
+        setObjectProperty(name, value, true);
     }
 
     @Override
     public void setObjectProperty(String name, Object value) throws JMSException {
-        checkReadOnlyProperties();
-        // TODO Auto-generated method stub
+        setObjectProperty(name, value, true);
+    }
 
+    protected void setObjectProperty(String name, Object value, boolean checkReadOnly) throws JMSException {
+
+        if (checkReadOnly) {
+            checkReadOnlyProperties();
+        }
+
+        if (name == null || name.equals("")) {
+            throw new IllegalArgumentException("Property name cannot be empty or null");
+        }
+
+        if (value instanceof UTF8Buffer) {
+            value = value.toString();
+        }
+
+        // Ensure that message sent with scheduling options comply with the
+        // expected property types for the settings values.
+        value = convertScheduled(name, value);
+
+        new OpenWireMessagePropertySetter(name).set(message, value);
     }
 
     @Override
@@ -454,5 +465,19 @@ public class OpenWireJMSMessage implements Message {
         if (readOnlyBody) {
             throw new MessageNotWriteableException("Message body is read-only");
         }
+    }
+
+    protected Object convertScheduled(String name, Object value) throws MessageFormatException {
+        Object result = value;
+        if (OpenWireConstants.AMQ_SCHEDULED_DELAY.equals(name)){
+            result = TypeConversionSupport.convert(value, Long.class);
+        }
+        else if (OpenWireConstants.AMQ_SCHEDULED_PERIOD.equals(name)){
+            result = TypeConversionSupport.convert(value, Long.class);
+        }
+        else if (OpenWireConstants.AMQ_SCHEDULED_REPEAT.equals(name)){
+            result = TypeConversionSupport.convert(value, Integer.class);
+        }
+        return result;
     }
 }
