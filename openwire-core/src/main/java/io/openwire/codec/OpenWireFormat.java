@@ -149,9 +149,11 @@ public final class OpenWireFormat {
 
                 if (!sizePrefixDisabled) {
                     size = sequence.getLength() - 4;
-                    int pos = sequence.offset;
+                    int length = sequence.length;
+                    int offset = sequence.offset;
                     sequence.bigEndianEditor().writeInt(size);
-                    sequence.offset = pos;
+                    sequence.length = length;
+                    sequence.offset = offset;
                 }
             }
         } else {
