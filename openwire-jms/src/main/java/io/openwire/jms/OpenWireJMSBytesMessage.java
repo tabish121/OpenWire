@@ -29,20 +29,35 @@ public class OpenWireJMSBytesMessage extends OpenWireJMSMessage implements Bytes
     private final OpenWireBytesMessage message;
 
     /**
-     * Creates a new instance that wraps a new OpenWireMessage instance.
+     * Creates a new instance that wraps a new OpenWireJMSBytesMessage instance.
      */
     public OpenWireJMSBytesMessage() {
         this(new OpenWireBytesMessage());
     }
 
     /**
-     * Creates a new instance that wraps the given OpenWireMessage
+     * Creates a new instance that wraps the given OpenWireJMSBytesMessage
      *
      * @param message
      *        the OpenWireMessage to wrap.
      */
     public OpenWireJMSBytesMessage(OpenWireBytesMessage message) {
+        super(message);
         this.message = message;
+    }
+
+    @Override
+    public OpenWireJMSBytesMessage copy() throws JMSException {
+        //storeContent();
+        OpenWireJMSBytesMessage other = new OpenWireJMSBytesMessage(message.copy());
+        other.copy(this);
+        return other;
+    }
+
+    private void copy(OpenWireJMSBytesMessage other) throws JMSException {
+        super.copy(other);
+        //this.bytesOut = null;
+        //this.dataIn = null;
     }
 
     @Override

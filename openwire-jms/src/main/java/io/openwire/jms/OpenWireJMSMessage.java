@@ -71,8 +71,10 @@ public class OpenWireJMSMessage implements Message {
      * Copies this message into a new OpenWireJMSMessage instance.
      *
      * @return a new copy of this message and it's contents.
+     *
+     * @throws JMSException if an error occurs during the copy operation.
      */
-    public OpenWireJMSMessage copy() {
+    public OpenWireJMSMessage copy() throws JMSException {
         OpenWireJMSMessage copy = new OpenWireJMSMessage(message.copy());
         copy(copy);
         return copy;
