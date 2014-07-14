@@ -25,6 +25,7 @@ import io.openwire.jms.utils.TypeConversionSupport;
 import io.openwire.utils.ExceptionSupport;
 
 import java.util.Enumeration;
+import java.util.Vector;
 import java.util.concurrent.Callable;
 
 import javax.jms.DeliveryMode;
@@ -64,6 +65,22 @@ public class OpenWireJMSMessage implements Message {
      */
     public OpenWireJMSMessage(OpenWireMessage message) {
         this.message = message;
+    }
+
+    /**
+     * Copies this message into a new OpenWireJMSMessage instance.
+     *
+     * @return a new copy of this message and it's contents.
+     */
+    public OpenWireJMSMessage copy() {
+        OpenWireJMSMessage copy = new OpenWireJMSMessage(message.copy());
+        copy(copy);
+        return copy;
+    }
+
+    protected void copy(OpenWireJMSMessage copy) {
+        copy.readOnlyBody = readOnlyBody;
+        copy.readOnlyProperties = readOnlyProperties;
     }
 
     /**
@@ -190,7 +207,11 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public boolean propertyExists(String name) throws JMSException {
-        return message.propertyExists(name);
+        try {
+            return (message.propertyExists(name) || getObjectProperty(name)!= null);
+        } catch (Exception e) {
+            throw ExceptionSupport.create(e);
+        }
     }
 
     @Override
@@ -325,6 +346,21 @@ public class OpenWireJMSMessage implements Message {
         return message.getPropertyNames();
     }
 
+    /**
+     * return all property names, including standard JMS properties and JMSX properties
+     * @return  Enumeration of all property names on this message
+     * @throws JMSException
+     */
+    public Enumeration<String> getAllPropertyNames() throws JMSException {
+        try {
+            Vector<String> result = new Vector<String>(message.getProperties().keySet());
+            result.addAll(OpenWireMessagePropertyGetter.getPropertyNames());
+            return result.elements();
+        } catch (Exception e) {
+            throw ExceptionSupport.create(e);
+        }
+    }
+
     @Override
     public void setBooleanProperty(String name, boolean value) throws JMSException {
         setObjectProperty(name, Boolean.valueOf(value), true);
@@ -453,6 +489,40 @@ public class OpenWireJMSMessage implements Message {
      */
     public void setReadOnlyProperties(boolean readOnlyProperties) {
         this.readOnlyProperties = readOnlyProperties;
+    }
+
+    /**
+     * @returns true if this message has expired.
+     */
+    public boolean isExpired() {
+        return message.isExpired();
+    }
+
+    /**
+     * @returns true if this message is an Advisory message instance.
+     */
+    public boolean isAdviory() {
+        return this.message.isAdvisory();
+    }
+
+    @Override
+    public int hashCode() {
+        return message.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other == null || other.getClass() != getClass()) {
+            return false;
+        }
+
+        OpenWireJMSMessage jmsMessage = (OpenWireJMSMessage) other;
+
+        return message.equals(jmsMessage.getOpenWireMessage());
     }
 
     private void checkReadOnlyProperties() throws MessageNotWriteableException {

@@ -22,6 +22,7 @@ import io.openwire.commands.TransactionId;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -183,6 +184,16 @@ public class OpenWireMessagePropertyGetter {
         });
     }
 
+    /**
+     * For each of the currently configured message property intercepter instance a
+     * string key value is inserted into an Set and returned.
+     *
+     * @return a Set<String> containing the names of all intercepted properties.
+     */
+    public static Set<String> getPropertyNames() {
+        return PROPERTY_GETTERS.keySet();
+    }
+
     private final String name;
     private final PropertyGetter jmsPropertyExpression;
 
@@ -244,7 +255,6 @@ public class OpenWireMessagePropertyGetter {
      */
     @Override
     public boolean equals(Object o) {
-
         if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
         }

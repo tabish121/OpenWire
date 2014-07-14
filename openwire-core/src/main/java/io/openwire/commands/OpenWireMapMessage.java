@@ -59,7 +59,7 @@ public class OpenWireMapMessage extends OpenWireMessage {
     }
 
     @Override
-    public Message copy() {
+    public OpenWireMapMessage copy() {
         OpenWireMapMessage copy = new OpenWireMapMessage();
         copy(copy);
         return copy;

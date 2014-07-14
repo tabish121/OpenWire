@@ -60,7 +60,7 @@ public class OpenWireBytesMessage extends OpenWireMessage {
     protected transient int length;
 
     @Override
-    public Message copy() {
+    public OpenWireBytesMessage copy() {
         OpenWireBytesMessage copy = new OpenWireBytesMessage();
         copy(copy);
         return copy;

@@ -21,6 +21,7 @@ import io.openwire.commands.OpenWireMessage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
@@ -161,6 +162,16 @@ public class OpenWireMessagePropertySetter {
     private final PropertySetter jmsPropertyExpression;
 
     /**
+     * For each of the currently configured message property intercepter instance a
+     * string key value is inserted into an Set and returned.
+     *
+     * @return a Set<String> containing the names of all intercepted properties.
+     */
+    public static Set<String> getPropertyNames() {
+        return PROPERTY_SETTERS.keySet();
+    }
+
+    /**
      * Creates an new property getter instance that is assigned to read the named value.
      *
      * @param name
@@ -185,6 +196,7 @@ public class OpenWireMessagePropertySetter {
     public void set(OpenWireMessage message, Object value) throws JMSException {
         if (jmsPropertyExpression != null) {
             jmsPropertyExpression.setProperty(message, value);
+            return;
         }
 
         message.setProperty(name, value);

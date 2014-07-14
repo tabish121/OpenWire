@@ -48,7 +48,7 @@ public class OpenWireMessage extends Message {
     }
 
     @Override
-    public Message copy() {
+    public OpenWireMessage copy() {
         OpenWireMessage copy = new OpenWireMessage();
         copy(copy);
         return copy;
@@ -56,6 +56,8 @@ public class OpenWireMessage extends Message {
 
     protected void copy(OpenWireMessage copy) {
         copy.useCompression = useCompression;
+        copy.nestedMapAndListAllowed = nestedMapAndListAllowed;
+
         super.copy(copy);
     }
 
@@ -110,6 +112,7 @@ public class OpenWireMessage extends Message {
      * instance variables ProducerId and ProducerSequenceId
      *
      * @param value
+     *        the string Message ID value to assign to this message.
      *
      * @throws JMSException if an error occurs while parsing the String to a MessageID
      */
@@ -119,9 +122,6 @@ public class OpenWireMessage extends Message {
                 MessageId id = new MessageId(value);
                 this.setMessageId(id);
             } catch (NumberFormatException e) {
-                // we must be some foreign JMS provider or strange user-supplied
-                // String
-                // so lets set the IDs to be 1
                 MessageId id = new MessageId();
                 id.setTextView(value);
                 this.setMessageId(id);
@@ -172,16 +172,7 @@ public class OpenWireMessage extends Message {
 
     @Override
     public void setProperty(String name, Object value) throws JMSException {
-        if (name == null || name.equals("")) {
-            throw new IllegalArgumentException("Property name cannot be empty or null");
-        }
-
-        if (value instanceof UTF8Buffer) {
-            value = value.toString();
-        }
-
-        checkValidObject(value);
-        super.setProperty(name, value);
+        setProperty(name, value, true);
     }
 
     /**
@@ -200,6 +191,37 @@ public class OpenWireMessage extends Message {
         for (Map.Entry<String, ?> entry : properties.entrySet()) {
             setProperty(entry.getKey(), entry.getValue());
         }
+    }
+
+    /**
+     * Allows for unchecked additions to the internal message properties if desired.
+     *
+     * This method is mainly useful for unit testing message types to ensure that get
+     * method fail on conversions from bad types.
+     *
+     * @param name
+     *        the name of the property to set
+     * @param value
+     *        the new value to assigned to the named property.
+     * @param checkValid
+     *        indicates if a type validity check should be performed on the given object.
+     *
+     * @throws JMSException if an error occurs while attempting to set the property value.
+     */
+    public void setProperty(String name, Object value, boolean checkValid) throws JMSException {
+        if (name == null || name.equals("")) {
+            throw new IllegalArgumentException("Property name cannot be empty or null");
+        }
+
+        if (value instanceof UTF8Buffer) {
+            value = value.toString();
+        }
+
+        if (checkValid) {
+            checkValidObject(value);
+        }
+
+        super.setProperty(name, value);
     }
 
     @Override

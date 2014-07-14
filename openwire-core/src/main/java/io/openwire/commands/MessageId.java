@@ -107,7 +107,11 @@ public class MessageId implements DataStructure, Comparable<MessageId> {
     @Override
     public int hashCode() {
         if (hashCode == 0) {
-            hashCode = producerId.hashCode() ^ (int) producerSequenceId;
+            if (textView != null) {
+                hashCode = textView.hashCode();
+            } else {
+                hashCode = producerId.hashCode() ^ (int) producerSequenceId;
+            }
         }
         return hashCode;
     }

@@ -42,7 +42,7 @@ public class OpenWireBlobMessage extends OpenWireMessage {
     private transient URL url;
 
     @Override
-    public Message copy() {
+    public OpenWireBlobMessage copy() {
         OpenWireBlobMessage copy = new OpenWireBlobMessage();
         copy(copy);
         return copy;

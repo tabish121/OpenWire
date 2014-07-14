@@ -54,7 +54,7 @@ public class OpenWireStreamMessage extends OpenWireMessage {
     protected transient int remainingBytes = -1;
 
     @Override
-    public Message copy() {
+    public OpenWireStreamMessage copy() {
         OpenWireStreamMessage copy = new OpenWireStreamMessage();
         copy(copy);
         return copy;

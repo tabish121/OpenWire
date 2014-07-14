@@ -48,7 +48,7 @@ public class OpenWireObjectMessage extends OpenWireMessage {
     protected transient Serializable object;
 
     @Override
-    public Message copy() {
+    public OpenWireObjectMessage copy() {
         OpenWireObjectMessage copy = new OpenWireObjectMessage();
         copy(copy);
         return copy;

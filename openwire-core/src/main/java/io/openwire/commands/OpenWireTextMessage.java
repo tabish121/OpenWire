@@ -45,7 +45,7 @@ public class OpenWireTextMessage extends OpenWireMessage {
     protected String text;
 
     @Override
-    public Message copy() {
+    public OpenWireTextMessage copy() {
         OpenWireTextMessage copy = new OpenWireTextMessage();
         copy(copy);
         return copy;
