@@ -551,14 +551,13 @@ public class OpenWireJMSMessageTest {
         assertTrue("expected delivery count = 1 - got: " + count, count == 1);
     }
 
-    // TODO
-//    @Test
-//    public void testClearBody() throws JMSException {
-//        OpenWireBytesMessage message = new OpenWireBytesMessage();
-//        message.clearBody();
-//        assertFalse(message.isReadOnlyBody());
-//        assertNull(message.getContent());
-//    }
+    @Test
+    public void testClearBody() throws JMSException {
+        OpenWireJMSBytesMessage message = new OpenWireJMSBytesMessage();
+        message.clearBody();
+        assertFalse(message.isReadOnlyBody());
+        assertNull(message.getOpenWireMessage().getContent());
+    }
 
     @Test
     public void testBooleanPropertyConversion() throws JMSException {
