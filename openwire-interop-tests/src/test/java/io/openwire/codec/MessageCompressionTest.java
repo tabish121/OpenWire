@@ -149,9 +149,7 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
         sendOpenWireBytesMessage(TEXT);
         OpenWireBytesMessage message = receiveOpenWireBytesMessage();
         int compressedSize = message.getContent().getLength();
-        byte[] bytes = new byte[TEXT.getBytes("UTF8").length];
-        message.readBytes(bytes);
-        assertTrue(message.readBytes(new byte[255]) == -1);
+        byte[] bytes = message.getBodyBytes();
         String rcvString = new String(bytes, "UTF8");
         assertEquals(TEXT, rcvString);
         assertTrue(message.isCompressed());
@@ -169,9 +167,7 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
         sendAMQBytesMessage(TEXT);
         OpenWireBytesMessage message = receiveOpenWireBytesMessage();
         int compressedSize = message.getContent().getLength();
-        byte[] bytes = new byte[TEXT.getBytes("UTF8").length];
-        message.readBytes(bytes);
-        assertTrue(message.readBytes(new byte[255]) == -1);
+        byte[] bytes = message.getBodyBytes();
         String rcvString = new String(bytes, "UTF8");
         assertEquals(TEXT, rcvString);
         assertTrue(message.isCompressed());
@@ -189,9 +185,7 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
         sendAMQBytesMessage(TEXT);
         OpenWireBytesMessage message = receiveOpenWireBytesMessage();
         int compressedSize = message.getContent().getLength();
-        byte[] bytes = new byte[TEXT.getBytes("UTF8").length];
-        message.readBytes(bytes);
-        assertTrue(message.readBytes(new byte[255]) == -1);
+        byte[] bytes = message.getBodyBytes();
         String rcvString = new String(bytes, "UTF8");
         assertEquals(TEXT, rcvString);
         assertTrue(message.isCompressed());
@@ -323,7 +317,7 @@ public class MessageCompressionTest extends OpenWireInteropTestSupport {
 
         OpenWireBytesMessage message = new OpenWireBytesMessage();
         message.setUseCompression(useCompression);
-        message.writeBytes(payload.getBytes("UTF8"));
+        message.setBodyBytes(payload.getBytes("UTF8"));
         message.setTimestamp(System.currentTimeMillis());
         message.setMessageId(producerId.getNextMessageId());
         message.setProducerId(producerId.getProducerId());

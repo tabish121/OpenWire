@@ -33,6 +33,7 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageFormatException;
+import javax.jms.MessageNotReadableException;
 import javax.jms.MessageNotWriteableException;
 
 import org.fusesource.hawtbuf.UTF8Buffer;
@@ -51,7 +52,7 @@ public class OpenWireJMSMessage implements Message {
     private boolean readOnlyProperties;
 
     /**
-     * Creates a new instance that wraps a new OpenWireMessage isntance.
+     * Creates a new instance that wraps a new OpenWireMessage instance.
      */
     public OpenWireJMSMessage() {
         this(new OpenWireMessage());
@@ -536,6 +537,12 @@ public class OpenWireJMSMessage implements Message {
     protected void checkReadOnlyBody() throws MessageNotWriteableException {
         if (readOnlyBody) {
             throw new MessageNotWriteableException("Message body is read-only");
+        }
+    }
+
+    protected void checkWriteOnlyBody() throws MessageNotReadableException {
+        if (!readOnlyBody) {
+            throw new MessageNotReadableException("Message body is write-only");
         }
     }
 
