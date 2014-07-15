@@ -49,6 +49,7 @@ public class OpenWireJMSTextMessage extends OpenWireJMSMessage implements TextMe
 
     @Override
     public void setText(String text) throws JMSException {
+        checkReadOnlyBody();
         message.setText(text);
     }
 
