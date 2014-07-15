@@ -57,4 +57,9 @@ public class OpenWireJMSTextMessage extends OpenWireJMSMessage implements TextMe
     public String getText() throws JMSException {
         return message.getText();
     }
+
+    @Override
+    public String toString() {
+        return this.message.toString();
+    }
 }
