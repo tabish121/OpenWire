@@ -119,7 +119,7 @@ public class OpenWireTextMessage extends OpenWireMessage {
     @Override
     public void storeContentAndClear() {
         storeContent();
-        text=null;
+        text = null;
     }
 
     @Override
