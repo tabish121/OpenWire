@@ -28,6 +28,7 @@ import java.util.Vector;
 import javax.jms.JMSException;
 import javax.jms.MessageFormatException;
 
+import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
 
 /**
@@ -105,6 +106,82 @@ public class OpenWireMessage extends Message {
 
     public void setCorrelationIdAsBytes(byte[] correlationId) throws JMSException {
         this.setCorrelationId(decodeString(correlationId));
+    }
+
+    /**
+     * @returns true if the message has data in its body, false if empty.
+     */
+    public boolean hasContent() {
+        Buffer content = getContent();
+        if (content == null || content.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Provides a fast way to read the message contents.
+     *
+     * This method, unlike the base class getContent method will perform any needed
+     * decompression on a message that was received with a compressed payload.
+     *
+     * @return a the message contents, uncompressed as needed.
+     *
+     * @throws JMSException if an error occurs while accessing the message payload.
+     */
+    public Buffer getPayload() throws JMSException {
+        Buffer data = getContent();
+        if (data == null) {
+            data = new Buffer(new byte[] {}, 0, 0);
+        } else if (isCompressed()) {
+            try {
+                return decompress();
+            } catch (IOException e) {
+                throw ExceptionSupport.create(e);
+            }
+        }
+
+        return data;
+    }
+
+    /**
+     * Set the contents of this message.
+     *
+     * This method will, unlike the base class setContent method perform any
+     * necessary compression of the given bytes if the message is configured for
+     * message compression.
+     *
+     * @param bytes
+     *        the new byte array to use to fill the message body.
+     *
+     * @throws JMSException if an error occurs while accessing the message payload.
+     */
+    public void setPayload(byte[] bytes) throws JMSException {
+        setPayload(new Buffer(bytes));
+    }
+
+    /**
+     * Set the contents of this message.
+     *
+     * This method will, unlike the base class setContent method perform any
+     * necessary compression of the given bytes if the message is configured for
+     * message compression.
+     *
+     * @param buffer
+     *        the new byte Buffer to use to fill the message body.
+     *
+     * @throws JMSException if an error occurs while accessing the message payload.
+     */
+    public void setPayload(Buffer buffer) throws JMSException {
+        try {
+            setContent(buffer);
+            if (isUseCompression()) {
+                doCompress();
+            }
+        } catch (IOException ioe) {
+            throw ExceptionSupport.create(ioe);
+        }
     }
 
     /**

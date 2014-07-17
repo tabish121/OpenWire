@@ -99,12 +99,12 @@ public class OpenWireBytesMessage extends OpenWireMessage {
      * @throws JMSException if an error occurs while accessing the message payload.
      */
     public byte[] getBodyBytes() throws JMSException {
-        Buffer data = getContent();
+        Buffer data = getPayload();
         if (data == null) {
             data = new Buffer(new byte[] {}, 0, 0);
         } else if (isCompressed()) {
             try {
-                return decompress(data);
+                data = decompress();
             } catch (IOException e) {
                 throw ExceptionSupport.create(e);
             }
@@ -139,11 +139,8 @@ public class OpenWireBytesMessage extends OpenWireMessage {
      */
     public void setBodyBytes(Buffer buffer) {
         try {
-            setContent(buffer);
-            if (isUseCompression()) {
-                doCompress();
-            }
-        } catch (IOException ioe) {
+            setPayload(buffer);
+        } catch (Exception ioe) {
             throw new RuntimeException(ioe.getMessage(), ioe);
         }
     }
@@ -153,19 +150,21 @@ public class OpenWireBytesMessage extends OpenWireMessage {
         return "OpenWireBytesMessage";
     }
 
-    protected byte[] decompress(Buffer dataSequence) throws IOException {
+    @Override
+    protected Buffer doDecompress() throws IOException {
+        Buffer compressed = getContent();
         Inflater inflater = new Inflater();
         ByteArrayOutputStream decompressed = new ByteArrayOutputStream();
         try {
-            BufferEditor editor = BufferEditor.big(dataSequence);
+            BufferEditor editor = BufferEditor.big(compressed);
             int length = editor.readInt();
-            dataSequence.offset = 0;
-            byte[] data = Arrays.copyOfRange(dataSequence.getData(), 4, dataSequence.getLength());
+            compressed.offset = 0;
+            byte[] data = Arrays.copyOfRange(compressed.getData(), 4, compressed.getLength());
             inflater.setInput(data);
             byte[] buffer = new byte[length];
             int count = inflater.inflate(buffer);
             decompressed.write(buffer, 0, count);
-            return decompressed.toByteArray();
+            return decompressed.toBuffer();
         } catch (Exception e) {
             throw new IOException(e);
         } finally {

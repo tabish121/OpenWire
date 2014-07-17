@@ -25,8 +25,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
 
 import javax.jms.JMSException;
 import javax.jms.MessageNotWriteableException;
@@ -75,26 +73,19 @@ public class OpenWireTextMessage extends OpenWireMessage {
         if (text == null && getContent() != null) {
             text = decodeContent();
             setContent(null);
-            setCompressed(false);
         }
         return text;
     }
 
     private String decodeContent() throws JMSException {
         String text = null;
-        if (getContent() != null) {
+        if (hasContent()) {
             InputStream is = null;
             try {
-                Buffer bodyAsBytes = getContent();
-                if (bodyAsBytes != null) {
-                    is = new ByteArrayInputStream(bodyAsBytes);
-                    if (isCompressed()) {
-                        is = new InflaterInputStream(is);
-                    }
-                    DataInputStream dataIn = new DataInputStream(is);
-                    text = OpenWireMarshallingSupport.readUTF8(dataIn);
-                    dataIn.close();
-                }
+                is = new ByteArrayInputStream(getPayload());
+                DataInputStream dataIn = new DataInputStream(is);
+                text = OpenWireMarshallingSupport.readUTF8(dataIn);
+                dataIn.close();
             } catch (IOException ioe) {
                 throw ExceptionSupport.create(ioe);
             } finally {
@@ -129,16 +120,12 @@ public class OpenWireTextMessage extends OpenWireMessage {
             if (content == null && text != null) {
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
                 OutputStream os = bytesOut;
-                if (isUseCompression()) {
-                    compressed = true;
-                    os = new DeflaterOutputStream(os);
-                }
                 DataOutputStream dataOut = new DataOutputStream(os);
                 OpenWireMarshallingSupport.writeUTF8(dataOut, this.text);
                 dataOut.close();
-                setContent(bytesOut.toBuffer());
+                setPayload(bytesOut.toBuffer());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
