@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import javax.jms.JMSException;
 
@@ -417,6 +418,9 @@ public abstract class Message extends BaseCommand implements MarshallAware {
 
     public void setContent(Buffer content) {
         this.content = content;
+        if (content == null) {
+            compressed = false;
+        }
     }
 
     /**
@@ -645,6 +649,13 @@ public abstract class Message extends BaseCommand implements MarshallAware {
         jmsXGroupFirstForConsumer = val;
     }
 
+    /**
+     * For a Message that is not currently using compression in its message body this
+     * method will initiate a store of current content and then compress the data in
+     * the message body.
+     *
+     * @throws IOException if an error occurs during the compression process.
+     */
     public void compress() throws IOException {
         if (!isCompressed()) {
             storeContent();
@@ -652,6 +663,42 @@ public abstract class Message extends BaseCommand implements MarshallAware {
                 doCompress();
             }
         }
+    }
+
+    /**
+     * For a message whose body is compressed this method will perform a full decompression
+     * of the contents and return the resulting uncompressed buffer, if the contents are not
+     * compressed then they are returned unchanged.
+     *
+     * @return a Buffer instance that contains the message contents, uncompressed if needed.
+     *
+     * @throws IOException if an error occurs during decompression of the message contents.
+     */
+    public Buffer decompress() throws IOException {
+        if (isCompressed()) {
+            return doDecompress();
+        } else {
+            return content;
+        }
+    }
+
+    protected Buffer doDecompress() throws IOException {
+        ByteArrayInputStream input = new ByteArrayInputStream(this.content.getData(), this.content.getOffset(), this.content.getLength());
+        InflaterInputStream inflater = new InflaterInputStream(input);
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            byte[] buffer = new byte[8*1024];
+            int read = 0;
+            while ((read = inflater.read(buffer)) != -1) {
+                output.write(buffer, 0, read);
+            }
+        } finally {
+            inflater.close();
+            output.close();
+        }
+
+        return output.toBuffer();
     }
 
     protected void doCompress() throws IOException {
