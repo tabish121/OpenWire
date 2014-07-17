@@ -48,7 +48,19 @@ public class OpenWireJMSObjectMessage extends OpenWireJMSMessage implements Obje
     }
 
     @Override
+    public void clearBody() throws JMSException {
+        message.clearBody();
+    }
+
+    @Override
+    public OpenWireJMSObjectMessage copy() throws JMSException {
+        OpenWireJMSObjectMessage other = new OpenWireJMSObjectMessage(message.copy());
+        return other;
+    }
+
+    @Override
     public void setObject(Serializable object) throws JMSException {
+        checkReadOnlyBody();
         message.setObject(object);
     }
 
