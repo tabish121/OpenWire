@@ -16,8 +16,6 @@
  */
 package io.openwire.commands;
 
-import io.openwire.utils.ExceptionSupport;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.zip.Deflater;
@@ -102,12 +100,6 @@ public class OpenWireBytesMessage extends OpenWireMessage {
         Buffer data = getPayload();
         if (data == null) {
             data = new Buffer(new byte[] {}, 0, 0);
-        } else if (isCompressed()) {
-            try {
-                data = decompress();
-            } catch (IOException e) {
-                throw ExceptionSupport.create(e);
-            }
         }
 
         return data.toByteArray();
