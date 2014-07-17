@@ -49,6 +49,7 @@ public class OpenWireJMSObjectMessage extends OpenWireJMSMessage implements Obje
 
     @Override
     public void clearBody() throws JMSException {
+        super.clearBody();
         message.clearBody();
     }
 

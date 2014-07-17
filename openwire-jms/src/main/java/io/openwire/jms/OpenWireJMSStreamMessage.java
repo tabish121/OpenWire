@@ -46,6 +46,18 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
     }
 
     @Override
+    public OpenWireJMSStreamMessage copy() throws JMSException {
+        OpenWireJMSStreamMessage other = new OpenWireJMSStreamMessage(message.copy());
+        return other;
+    }
+
+    @Override
+    public void clearBody() throws JMSException {
+        super.clearBody();
+        message.clearBody();
+    }
+
+    @Override
     public boolean readBoolean() throws JMSException {
         // TODO Auto-generated method stub
         return false;

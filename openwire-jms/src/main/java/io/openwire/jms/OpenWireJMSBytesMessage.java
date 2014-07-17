@@ -83,6 +83,7 @@ public class OpenWireJMSBytesMessage extends OpenWireJMSMessage implements Bytes
 
     @Override
     public void clearBody() throws JMSException {
+        super.clearBody();
         message.clearBody();
         dataOut = null;
         dataIn = null;

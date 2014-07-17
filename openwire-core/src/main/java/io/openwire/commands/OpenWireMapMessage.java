@@ -218,6 +218,26 @@ public class OpenWireMapMessage extends OpenWireMessage {
     }
 
     /**
+     * Removes an object value with the specified name into the Map.
+     *
+     * @param name
+     *        the name of the Java object
+     *
+     * @throws JMSException if the JMS provider fails to write the message due
+     *                      to some internal error.
+     * @throws IllegalArgumentException if the name is null or if the name is an
+     *                                  empty string.
+     */
+    public void removeObject(String name) throws JMSException {
+        initializeWriting();
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("map element name cannot be null or empty.");
+        }
+
+        this.map.remove(name);
+    }
+
+    /**
      * Returns an <CODE>Enumeration</CODE> of all the names in the
      * <CODE>MapMessage</CODE> object.
      *
@@ -257,7 +277,7 @@ public class OpenWireMapMessage extends OpenWireMessage {
 
     @Override
     public String toString() {
-        return super.toString() + " ActiveMQMapMessage{ " + "theTable = " + map + " }";
+        return super.toString() + " OpenWireMapMessage{ " + "theTable = " + map + " }";
     }
 
     protected Map<String, Object> getContentMap() throws JMSException {

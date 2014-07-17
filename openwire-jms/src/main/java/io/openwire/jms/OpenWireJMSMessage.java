@@ -443,7 +443,7 @@ public class OpenWireJMSMessage implements Message {
 
     @Override
     public void clearBody() throws JMSException {
-        message.clearBody();
+        setReadOnlyBody(false);
     }
 
     /**
