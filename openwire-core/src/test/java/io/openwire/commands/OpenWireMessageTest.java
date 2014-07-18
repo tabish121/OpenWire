@@ -22,6 +22,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import io.openwire.codec.OpenWireFormat;
+
+import java.io.IOException;
+import java.util.Map;
 
 import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
@@ -103,7 +107,7 @@ public class OpenWireMessageTest {
     public void testShallowCopy() throws Exception {
         OpenWireMessage msg1 = new OpenWireMessage();
         msg1.setMessageId(jmsMessageID);
-        OpenWireMessage msg2 = (OpenWireMessage) msg1.copy();
+        OpenWireMessage msg2 = msg1.copy();
         assertTrue(msg1 != msg2 && msg1.equals(msg2));
     }
 
@@ -340,145 +344,54 @@ public class OpenWireMessageTest {
         assertTrue(((Float) msg.getProperty(name)).floatValue() == 1.3f);
     }
 
-//    @SuppressWarnings("rawtypes")
-//    @Test
-//    public void testGetPropertyNames() throws JMSException {
-//        OpenWireMessage msg = new OpenWireMessage();
-//        String name1 = "floatProperty";
-//        msg.setProperty(name1, 1.3f);
-//        String name2 = "JMSXDeliveryCount";
-//        msg.setProperty(name2, 1);
-//        String name3 = "JMSRedelivered";
-//        msg.setProperty(name3, false);
-//        boolean found1 = false;
-//        boolean found2 = false;
-//        boolean found3 = false;
-//        for (Enumeration iter = msg.getPropertyNames(); iter.hasMoreElements();) {
-//            Object element = iter.nextElement();
-//            found1 |= element.equals(name1);
-//            found2 |= element.equals(name2);
-//            found3 |= element.equals(name3);
-//        }
-//        assertTrue("prop name1 found", found1);
-//        // spec compliance, only non JMS (and JMSX) props returned
-//        assertFalse("prop name2 not found", found2);
-//        assertFalse("prop name4 not found", found3);
-//    }
-//
-//    @SuppressWarnings("rawtypes")
-//    @Test
-//    public void testGetAllPropertyNames() throws JMSException {
-//        OpenWireMessage msg = new OpenWireMessage();
-//        String name1 = "floatProperty";
-//        msg.setFloatProperty(name1, 1.3f);
-//        String name2 = "JMSXDeliveryCount";
-//        msg.setIntProperty(name2, 1);
-//        String name3 = "JMSRedelivered";
-//        msg.setBooleanProperty(name3, false);
-//        boolean found1 = false;
-//        boolean found2 = false;
-//        boolean found3 = false;
-//        for (Enumeration iter = msg.getAllPropertyNames(); iter.hasMoreElements();) {
-//            Object element = iter.nextElement();
-//            found1 |= element.equals(name1);
-//            found2 |= element.equals(name2);
-//            found3 |= element.equals(name3);
-//        }
-//        assertTrue("prop name1 found", found1);
-//        assertTrue("prop name2 found", found2);
-//        assertTrue("prop name4 found", found3);
-//    }
-//
-//    @Test
-//    public void testsetProperty() throws JMSException {
-//        OpenWireMessage msg = new OpenWireMessage();
-//        String name = "property";
-//
-//        try {
-//            msg.setProperty(name, "string");
-//            msg.setProperty(name, Byte.valueOf("1"));
-//            msg.setProperty(name, Short.valueOf("1"));
-//            msg.setProperty(name, Integer.valueOf("1"));
-//            msg.setProperty(name, Long.valueOf("1"));
-//            msg.setProperty(name, Float.valueOf("1.1f"));
-//            msg.setProperty(name, Double.valueOf("1.1"));
-//            msg.setProperty(name, Boolean.TRUE);
-//            msg.setProperty(name, null);
-//        } catch (MessageFormatException e) {
-//            fail("should accept object primitives and String");
-//        }
-//        try {
-//            msg.setProperty(name, new byte[5]);
-//            fail("should accept only object primitives and String");
-//        } catch (MessageFormatException e) {
-//        }
-//        try {
-//            msg.setProperty(name, new Object());
-//            fail("should accept only object primitives and String");
-//        } catch (MessageFormatException e) {
-//        }
-//    }
-//
-//    @Test
-//    public void testConvertProperties() throws Exception {
-//        io.openwire.commands.Message msg = new io.openwire.commands.Message() {
-//            @Override
-//            public io.openwire.commands.Message copy() {
-//                return null;
-//            }
-//
-//            @Override
-//            public void beforeMarshall(OpenWireFormat wireFormat) throws IOException {
-//                super.beforeMarshall(wireFormat);
-//            }
-//
-//            @Override
-//            public byte getDataStructureType() {
-//                return 0;
-//            }
-//
-//            @Override
-//            public Response visit(CommandVisitor visitor) throws Exception {
-//                return null;
-//            }
-//
-//            @Override
-//            public void clearBody() throws JMSException {
-//            }
-//
-//            @Override
-//            public void storeContent() {
-//            }
-//
-//            @Override
-//            public void storeContentAndClear() {
-//
-//            }
-//        };
-//
-//        msg.setProperty("stringProperty", "string");
-//        msg.setProperty("byteProperty", Byte.valueOf("1"));
-//        msg.setProperty("shortProperty", Short.valueOf("1"));
-//        msg.setProperty("intProperty", Integer.valueOf("1"));
-//        msg.setProperty("longProperty", Long.valueOf("1"));
-//        msg.setProperty("floatProperty", Float.valueOf("1.1f"));
-//        msg.setProperty("doubleProperty", Double.valueOf("1.1"));
-//        msg.setProperty("booleanProperty", Boolean.TRUE);
-//        msg.setProperty("nullProperty", null);
-//
-//        msg.beforeMarshall(new OpenWireFormat());
-//
-//        Map<String, Object> properties = msg.getProperties();
-//        assertEquals(properties.get("stringProperty"), "string");
-//        assertEquals(((Byte) properties.get("byteProperty")).byteValue(), 1);
-//        assertEquals(((Short) properties.get("shortProperty")).shortValue(), 1);
-//        assertEquals(((Integer) properties.get("intProperty")).intValue(), 1);
-//        assertEquals(((Long) properties.get("longProperty")).longValue(), 1);
-//        assertEquals(((Float) properties.get("floatProperty")).floatValue(), 1.1f, 0);
-//        assertEquals(((Double) properties.get("doubleProperty")).doubleValue(), 1.1, 0);
-//        assertEquals(((Boolean) properties.get("booleanProperty")).booleanValue(), true);
-//        assertNull(properties.get("nullProperty"));
-//    }
+    @Test
+    public void testPropertiesInt() throws Exception {
+        OpenWireObjectMessage message = new OpenWireObjectMessage();
+        message.setProperty("TestProp", 333);
+        fakeUnmarshal(message);
+        roundTripProperties(message);
+    }
+
+    @Test
+    public void testPropertiesString() throws Exception {
+        OpenWireObjectMessage message = new OpenWireObjectMessage();
+        message.setProperty("TestProp", "Value");
+        fakeUnmarshal(message);
+        roundTripProperties(message);
+    }
+
+    @Test
+    public void testPropertiesObject() throws Exception {
+        OpenWireObjectMessage message = new OpenWireObjectMessage();
+        message.setProperty("TestProp", "Value");
+        fakeUnmarshal(message);
+        roundTripProperties(message);
+    }
+
+    @Test
+    public void testPropertiesObjectNoMarshalling() throws Exception {
+        OpenWireObjectMessage message = new OpenWireObjectMessage();
+        message.setProperty("TestProp", "Value");
+        roundTripProperties(message);
+    }
+
+    private void roundTripProperties(OpenWireObjectMessage message) throws IOException, JMSException {
+        OpenWireObjectMessage copy = new OpenWireObjectMessage();
+        for (Map.Entry<String, Object> prop : message.getProperties().entrySet()) {
+            LOG.debug("{} -> {}", prop.getKey(), prop.getValue().getClass());
+            copy.setProperty(prop.getKey(), prop.getValue());
+        }
+    }
+
+    private void fakeUnmarshal(OpenWireObjectMessage message) throws Exception {
+        OpenWireFormat format = new OpenWireFormat(OpenWireFormat.DEFAULT_WIRE_VERSION);
+        message.beforeMarshall(format);
+        message.afterMarshall(format);
+
+        Buffer seq = message.getMarshalledProperties();
+        message.clearProperties();
+        message.setMarshalledProperties(seq);
+    }
 
     @Test
     public void testSetNullProperty() throws JMSException {
