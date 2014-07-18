@@ -48,6 +48,13 @@ public class OpenWireMessage extends Message {
         return DATA_STRUCTURE_TYPE;
     }
 
+    /**
+     * @return String value that represents the MIMI type for the OpenWireMessage type.
+     */
+    public String getMimeType() {
+        return "jms/message";
+    }
+
     @Override
     public OpenWireMessage copy() {
         OpenWireMessage copy = new OpenWireMessage();
@@ -301,29 +308,6 @@ public class OpenWireMessage extends Message {
         super.setProperty(name, value);
     }
 
-    @Override
-    public Response visit(CommandVisitor visitor) throws Exception {
-        return visitor.processMessage(this);
-    }
-
-    @Override
-    public void storeContent() {
-    }
-
-    @Override
-    public void storeContentAndClear() {
-        storeContent();
-    }
-
-    /**
-     * Method that allows an application to inform the Message instance that it is
-     * about to be sent and that it should prepare its internal state for dispatch.
-     *
-     * @throws JMSException if an error occurs or Message state is invalid.
-     */
-    public void onSend() throws JMSException {
-    }
-
     /**
      * @return whether the Message allows for Map and List elements in its properties.
      */
@@ -360,11 +344,27 @@ public class OpenWireMessage extends Message {
         return useCompression;
     }
 
+    @Override
+    public Response visit(CommandVisitor visitor) throws Exception {
+        return visitor.processMessage(this);
+    }
+
+    @Override
+    public void storeContent() {
+    }
+
+    @Override
+    public void storeContentAndClear() {
+        storeContent();
+    }
+
     /**
-     * @return String value that represents the MIMI type for the OpenWireMessage type.
+     * Method that allows an application to inform the Message instance that it is
+     * about to be sent and that it should prepare its internal state for dispatch.
+     *
+     * @throws JMSException if an error occurs or Message state is invalid.
      */
-    public String getMimeType() {
-        return "jms/message";
+    public void onSend() throws JMSException {
     }
 
     protected void checkValidObject(Object value) throws MessageFormatException {
