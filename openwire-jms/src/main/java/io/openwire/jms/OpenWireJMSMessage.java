@@ -39,7 +39,7 @@ import javax.jms.MessageNotWriteableException;
 import org.fusesource.hawtbuf.UTF8Buffer;
 
 /**
- * A JMS Message implementation that extends the basic OpenWireMessage instance
+ * A JMS Message implementation that wraps the basic OpenWireMessage instance
  * to enforce adherence to the JMS specification rules for the javax.jms.Message
  * type.
  */
