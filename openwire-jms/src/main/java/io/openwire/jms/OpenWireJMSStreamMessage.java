@@ -98,14 +98,11 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.BOOLEAN_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BOOLEAN_TYPE) {
                 return this.dataIn.readBoolean();
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return Boolean.valueOf(this.dataIn.readUTF()).booleanValue();
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 this.dataIn.reset();
                 throw new NullPointerException("Cannot convert NULL value to boolean.");
             } else {
@@ -127,14 +124,11 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
                 return this.dataIn.readByte();
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return Byte.valueOf(this.dataIn.readUTF()).byteValue();
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 this.dataIn.reset();
                 throw new NullPointerException("Cannot convert NULL value to byte.");
             } else {
@@ -163,17 +157,13 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
                 return this.dataIn.readShort();
-            }
-            if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
                 return this.dataIn.readByte();
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return Short.valueOf(this.dataIn.readUTF()).shortValue();
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 this.dataIn.reset();
                 throw new NullPointerException("Cannot convert NULL value to short.");
             } else {
@@ -202,11 +192,9 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.CHAR_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.CHAR_TYPE) {
                 return this.dataIn.readChar();
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 this.dataIn.reset();
                 throw new NullPointerException("Cannot convert NULL value to char.");
             } else {
@@ -235,20 +223,15 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.INTEGER_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.INTEGER_TYPE) {
                 return this.dataIn.readInt();
-            }
-            if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
                 return this.dataIn.readShort();
-            }
-            if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
                 return this.dataIn.readByte();
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return Integer.valueOf(this.dataIn.readUTF()).intValue();
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 this.dataIn.reset();
                 throw new NullPointerException("Cannot convert NULL value to int.");
             } else {
@@ -277,23 +260,17 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.LONG_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.LONG_TYPE) {
                 return this.dataIn.readLong();
-            }
-            if (type == OpenWireMarshallingSupport.INTEGER_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.INTEGER_TYPE) {
                 return this.dataIn.readInt();
-            }
-            if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
                 return this.dataIn.readShort();
-            }
-            if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
                 return this.dataIn.readByte();
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return Long.valueOf(this.dataIn.readUTF()).longValue();
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 this.dataIn.reset();
                 throw new NullPointerException("Cannot convert NULL value to long.");
             } else {
@@ -322,14 +299,11 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.FLOAT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.FLOAT_TYPE) {
                 return this.dataIn.readFloat();
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return Float.valueOf(this.dataIn.readUTF()).floatValue();
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 this.dataIn.reset();
                 throw new NullPointerException("Cannot convert NULL value to float.");
             } else {
@@ -358,17 +332,13 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.DOUBLE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.DOUBLE_TYPE) {
                 return this.dataIn.readDouble();
-            }
-            if (type == OpenWireMarshallingSupport.FLOAT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.FLOAT_TYPE) {
                 return this.dataIn.readFloat();
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return Double.valueOf(this.dataIn.readUTF()).doubleValue();
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 this.dataIn.reset();
                 throw new NullPointerException("Cannot convert NULL value to double.");
             } else {
@@ -397,38 +367,27 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 return null;
-            }
-            if (type == OpenWireMarshallingSupport.BIG_STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BIG_STRING_TYPE) {
                 return OpenWireMarshallingSupport.readUTF8(dataIn);
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return this.dataIn.readUTF();
-            }
-            if (type == OpenWireMarshallingSupport.LONG_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.LONG_TYPE) {
                 return new Long(this.dataIn.readLong()).toString();
-            }
-            if (type == OpenWireMarshallingSupport.INTEGER_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.INTEGER_TYPE) {
                 return new Integer(this.dataIn.readInt()).toString();
-            }
-            if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
                 return new Short(this.dataIn.readShort()).toString();
-            }
-            if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
                 return new Byte(this.dataIn.readByte()).toString();
-            }
-            if (type == OpenWireMarshallingSupport.FLOAT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.FLOAT_TYPE) {
                 return new Float(this.dataIn.readFloat()).toString();
-            }
-            if (type == OpenWireMarshallingSupport.DOUBLE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.DOUBLE_TYPE) {
                 return new Double(this.dataIn.readDouble()).toString();
-            }
-            if (type == OpenWireMarshallingSupport.BOOLEAN_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BOOLEAN_TYPE) {
                 return (this.dataIn.readBoolean() ? Boolean.TRUE : Boolean.FALSE).toString();
-            }
-            if (type == OpenWireMarshallingSupport.CHAR_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.CHAR_TYPE) {
                 return new Character(this.dataIn.readChar()).toString();
             } else {
                 this.dataIn.reset();
@@ -501,41 +460,29 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
             int type = this.dataIn.read();
             if (type == -1) {
                 throw new MessageEOFException("reached end of data");
-            }
-            if (type == OpenWireMarshallingSupport.NULL) {
+            } else if (type == OpenWireMarshallingSupport.NULL) {
                 return null;
-            }
-            if (type == OpenWireMarshallingSupport.BIG_STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BIG_STRING_TYPE) {
                 return OpenWireMarshallingSupport.readUTF8(dataIn);
-            }
-            if (type == OpenWireMarshallingSupport.STRING_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.STRING_TYPE) {
                 return this.dataIn.readUTF();
-            }
-            if (type == OpenWireMarshallingSupport.LONG_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.LONG_TYPE) {
                 return Long.valueOf(this.dataIn.readLong());
-            }
-            if (type == OpenWireMarshallingSupport.INTEGER_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.INTEGER_TYPE) {
                 return Integer.valueOf(this.dataIn.readInt());
-            }
-            if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.SHORT_TYPE) {
                 return Short.valueOf(this.dataIn.readShort());
-            }
-            if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BYTE_TYPE) {
                 return Byte.valueOf(this.dataIn.readByte());
-            }
-            if (type == OpenWireMarshallingSupport.FLOAT_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.FLOAT_TYPE) {
                 return new Float(this.dataIn.readFloat());
-            }
-            if (type == OpenWireMarshallingSupport.DOUBLE_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.DOUBLE_TYPE) {
                 return new Double(this.dataIn.readDouble());
-            }
-            if (type == OpenWireMarshallingSupport.BOOLEAN_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BOOLEAN_TYPE) {
                 return this.dataIn.readBoolean() ? Boolean.TRUE : Boolean.FALSE;
-            }
-            if (type == OpenWireMarshallingSupport.CHAR_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.CHAR_TYPE) {
                 return Character.valueOf(this.dataIn.readChar());
-            }
-            if (type == OpenWireMarshallingSupport.BYTE_ARRAY_TYPE) {
+            } else if (type == OpenWireMarshallingSupport.BYTE_ARRAY_TYPE) {
                 int len = this.dataIn.readInt();
                 byte[] value = new byte[len];
                 this.dataIn.readFully(value);
