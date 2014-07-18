@@ -748,10 +748,7 @@ public class OpenWireJMSBytesMessage extends OpenWireJMSMessage implements Bytes
         checkWriteOnlyBody();
         if (dataIn == null) {
             try {
-                byte[] data = message.getBodyBytes();
-                if (data == null) {
-                    data = new byte[0];
-                }
+                Buffer data = message.getPayload();
                 InputStream is = new ByteArrayInputStream(data);
                 length = data.length;
                 dataIn = new DataInputStream(is);
@@ -761,12 +758,12 @@ public class OpenWireJMSBytesMessage extends OpenWireJMSMessage implements Bytes
         }
     }
 
-    private void storeContent() {
+    private void storeContent() throws JMSException {
         if (dataOut != null) {
             try {
                 dataOut.close();
                 Buffer buffer = bytesOut.toBuffer();
-                message.setBodyBytes(buffer);
+                message.setPayload(buffer);
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe.getMessage(), ioe);
             } finally {
