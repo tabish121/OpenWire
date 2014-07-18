@@ -26,564 +26,517 @@ import javax.jms.MessageFormatException;
 import javax.jms.MessageNotReadableException;
 import javax.jms.MessageNotWriteableException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Test for the OpenWireJMSStreamMessage facade class.
  */
-@Ignore
 public class OpenWireJMSStreamMessageTest {
 
     @Test
-    public void testReadBoolean() {
+    public void testReadBoolean() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        msg.writeBoolean(true);
+        msg.reset();
+        assertTrue(msg.readBoolean());
+        msg.reset();
+        assertTrue(msg.readString().equals("true"));
+        msg.reset();
         try {
-            msg.writeBoolean(true);
-            msg.reset();
-            assertTrue(msg.readBoolean());
-            msg.reset();
-            assertTrue(msg.readString().equals("true"));
-            msg.reset();
-            try {
-                msg.readByte();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readShort();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readInt();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readLong();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readFloat();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readDouble();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readChar();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readBytes(new byte[1]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+            msg.readByte();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readShort();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readInt();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readLong();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readFloat();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readDouble();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readChar();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readBytes(new byte[1]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
         }
     }
 
     @Test
-    public void testreadByte() {
+    public void testreadByte() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        byte test = (byte) 4;
+        msg.writeByte(test);
+        msg.reset();
+        assertTrue(msg.readByte() == test);
+        msg.reset();
+        assertTrue(msg.readShort() == test);
+        msg.reset();
+        assertTrue(msg.readInt() == test);
+        msg.reset();
+        assertTrue(msg.readLong() == test);
+        msg.reset();
+        assertTrue(msg.readString().equals(new Byte(test).toString()));
+        msg.reset();
         try {
-            byte test = (byte) 4;
-            msg.writeByte(test);
-            msg.reset();
-            assertTrue(msg.readByte() == test);
-            msg.reset();
-            assertTrue(msg.readShort() == test);
-            msg.reset();
-            assertTrue(msg.readInt() == test);
-            msg.reset();
-            assertTrue(msg.readLong() == test);
-            msg.reset();
-            assertTrue(msg.readString().equals(new Byte(test).toString()));
-            msg.reset();
-            try {
-                msg.readBoolean();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readFloat();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readDouble();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readChar();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readBytes(new byte[1]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+            msg.readBoolean();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readFloat();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readDouble();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readChar();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readBytes(new byte[1]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
         }
     }
 
     @Test
-    public void testReadShort() {
+    public void testReadShort() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        short test = (short) 4;
+        msg.writeShort(test);
+        msg.reset();
+        assertTrue(msg.readShort() == test);
+        msg.reset();
+        assertTrue(msg.readInt() == test);
+        msg.reset();
+        assertTrue(msg.readLong() == test);
+        msg.reset();
+        assertTrue(msg.readString().equals(new Short(test).toString()));
+        msg.reset();
         try {
-            short test = (short) 4;
-            msg.writeShort(test);
-            msg.reset();
-            assertTrue(msg.readShort() == test);
-            msg.reset();
-            assertTrue(msg.readInt() == test);
-            msg.reset();
-            assertTrue(msg.readLong() == test);
-            msg.reset();
-            assertTrue(msg.readString().equals(new Short(test).toString()));
-            msg.reset();
-            try {
-                msg.readBoolean();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readByte();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readFloat();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readDouble();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readChar();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readBytes(new byte[1]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+            msg.readBoolean();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readByte();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readFloat();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readDouble();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readChar();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readBytes(new byte[1]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
         }
     }
 
     @Test
-    public void testReadChar() {
+    public void testReadChar() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        char test = 'z';
+        msg.writeChar(test);
+        msg.reset();
+        assertTrue(msg.readChar() == test);
+        msg.reset();
+        assertTrue(msg.readString().equals(new Character(test).toString()));
+        msg.reset();
         try {
-            char test = 'z';
-            msg.writeChar(test);
-            msg.reset();
-            assertTrue(msg.readChar() == test);
-            msg.reset();
-            assertTrue(msg.readString().equals(new Character(test).toString()));
-            msg.reset();
-            try {
-                msg.readBoolean();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readByte();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readShort();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readInt();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readLong();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readFloat();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readDouble();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readBytes(new byte[1]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+            msg.readBoolean();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readByte();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readShort();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readInt();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readLong();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readFloat();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readDouble();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readBytes(new byte[1]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
         }
     }
 
     @Test
-    public void testReadInt() {
+    public void testReadInt() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        int test = 4;
+        msg.writeInt(test);
+        msg.reset();
+        assertTrue(msg.readInt() == test);
+        msg.reset();
+        assertTrue(msg.readLong() == test);
+        msg.reset();
+        assertTrue(msg.readString().equals(new Integer(test).toString()));
+        msg.reset();
         try {
-            int test = 4;
-            msg.writeInt(test);
-            msg.reset();
-            assertTrue(msg.readInt() == test);
-            msg.reset();
-            assertTrue(msg.readLong() == test);
-            msg.reset();
-            assertTrue(msg.readString().equals(new Integer(test).toString()));
-            msg.reset();
-            try {
-                msg.readBoolean();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readByte();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readShort();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readFloat();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readDouble();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readChar();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readBytes(new byte[1]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+            msg.readBoolean();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readByte();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readShort();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readFloat();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readDouble();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readChar();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readBytes(new byte[1]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
         }
     }
 
     @Test
-    public void testReadLong() {
+    public void testReadLong() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        long test = 4L;
+        msg.writeLong(test);
+        msg.reset();
+        assertTrue(msg.readLong() == test);
+        msg.reset();
+        assertTrue(msg.readString().equals(Long.valueOf(test).toString()));
+        msg.reset();
         try {
-            long test = 4L;
-            msg.writeLong(test);
-            msg.reset();
-            assertTrue(msg.readLong() == test);
-            msg.reset();
-            assertTrue(msg.readString().equals(Long.valueOf(test).toString()));
-            msg.reset();
-            try {
-                msg.readBoolean();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readByte();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readShort();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readInt();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readFloat();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readDouble();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readChar();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readBytes(new byte[1]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg = new OpenWireJMSStreamMessage();
-            msg.writeObject(new Long("1"));
-            // reset so it's readable now
-            msg.reset();
-            assertEquals(new Long("1"), msg.readObject());
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+            msg.readBoolean();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readByte();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readShort();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readInt();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readFloat();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readDouble();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readChar();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readBytes(new byte[1]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg = new OpenWireJMSStreamMessage();
+        msg.writeObject(new Long("1"));
+        // reset so it's readable now
+        msg.reset();
+        assertEquals(new Long("1"), msg.readObject());
+    }
+
+    @Test
+    public void testReadFloat() throws Exception {
+        OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        float test = 4.4f;
+        msg.writeFloat(test);
+        msg.reset();
+        assertTrue(msg.readFloat() == test);
+        msg.reset();
+        assertTrue(msg.readDouble() == test);
+        msg.reset();
+        assertTrue(msg.readString().equals(new Float(test).toString()));
+        msg.reset();
+        try {
+            msg.readBoolean();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readByte();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readShort();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readInt();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readLong();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readChar();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readBytes(new byte[1]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
         }
     }
 
     @Test
-    public void testReadFloat() {
+    public void testReadDouble() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        double test = 4.4d;
+        msg.writeDouble(test);
+        msg.reset();
+        assertTrue(msg.readDouble() == test);
+        msg.reset();
+        assertTrue(msg.readString().equals(new Double(test).toString()));
+        msg.reset();
         try {
-            float test = 4.4f;
-            msg.writeFloat(test);
-            msg.reset();
-            assertTrue(msg.readFloat() == test);
-            msg.reset();
-            assertTrue(msg.readDouble() == test);
-            msg.reset();
-            assertTrue(msg.readString().equals(new Float(test).toString()));
-            msg.reset();
-            try {
-                msg.readBoolean();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readByte();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readShort();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readInt();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readLong();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readChar();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readBytes(new byte[1]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+            msg.readBoolean();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readByte();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readShort();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readInt();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readLong();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readFloat();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readChar();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
+        }
+        msg.reset();
+        try {
+            msg.readBytes(new byte[1]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException mfe) {
         }
     }
 
     @Test
-    public void testReadDouble() {
+    public void testReadString() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
+        byte testByte = (byte) 2;
+        msg.writeString(new Byte(testByte).toString());
+        msg.reset();
+        assertTrue(msg.readByte() == testByte);
+        msg.clearBody();
+        short testShort = 3;
+        msg.writeString(new Short(testShort).toString());
+        msg.reset();
+        assertTrue(msg.readShort() == testShort);
+        msg.clearBody();
+        int testInt = 4;
+        msg.writeString(new Integer(testInt).toString());
+        msg.reset();
+        assertTrue(msg.readInt() == testInt);
+        msg.clearBody();
+        long testLong = 6L;
+        msg.writeString(new Long(testLong).toString());
+        msg.reset();
+        assertTrue(msg.readLong() == testLong);
+        msg.clearBody();
+        float testFloat = 6.6f;
+        msg.writeString(new Float(testFloat).toString());
+        msg.reset();
+        assertTrue(msg.readFloat() == testFloat);
+        msg.clearBody();
+        double testDouble = 7.7d;
+        msg.writeString(new Double(testDouble).toString());
+        msg.reset();
+        assertTrue(msg.readDouble() == testDouble);
+        msg.clearBody();
+        msg.writeString("true");
+        msg.reset();
+        assertTrue(msg.readBoolean());
+        msg.clearBody();
+        msg.writeString("a");
+        msg.reset();
         try {
-            double test = 4.4d;
-            msg.writeDouble(test);
-            msg.reset();
-            assertTrue(msg.readDouble() == test);
-            msg.reset();
-            assertTrue(msg.readString().equals(new Double(test).toString()));
-            msg.reset();
-            try {
-                msg.readBoolean();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readByte();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readShort();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readInt();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readLong();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readFloat();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readChar();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-            msg.reset();
-            try {
-                msg.readBytes(new byte[1]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException mfe) {
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+            msg.readChar();
+            fail("Should have thrown exception");
+        } catch (MessageFormatException e) {
+        }
+        msg.clearBody();
+        msg.writeString("777");
+        msg.reset();
+        try {
+            msg.readBytes(new byte[3]);
+            fail("Should have thrown exception");
+        } catch (MessageFormatException e) {
         }
     }
 
     @Test
-    public void testReadString() {
-        OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
-        try {
-            byte testByte = (byte) 2;
-            msg.writeString(new Byte(testByte).toString());
-            msg.reset();
-            assertTrue(msg.readByte() == testByte);
-            msg.clearBody();
-            short testShort = 3;
-            msg.writeString(new Short(testShort).toString());
-            msg.reset();
-            assertTrue(msg.readShort() == testShort);
-            msg.clearBody();
-            int testInt = 4;
-            msg.writeString(new Integer(testInt).toString());
-            msg.reset();
-            assertTrue(msg.readInt() == testInt);
-            msg.clearBody();
-            long testLong = 6L;
-            msg.writeString(new Long(testLong).toString());
-            msg.reset();
-            assertTrue(msg.readLong() == testLong);
-            msg.clearBody();
-            float testFloat = 6.6f;
-            msg.writeString(new Float(testFloat).toString());
-            msg.reset();
-            assertTrue(msg.readFloat() == testFloat);
-            msg.clearBody();
-            double testDouble = 7.7d;
-            msg.writeString(new Double(testDouble).toString());
-            msg.reset();
-            assertTrue(msg.readDouble() == testDouble);
-            msg.clearBody();
-            msg.writeString("true");
-            msg.reset();
-            assertTrue(msg.readBoolean());
-            msg.clearBody();
-            msg.writeString("a");
-            msg.reset();
-            try {
-                msg.readChar();
-                fail("Should have thrown exception");
-            } catch (MessageFormatException e) {
-            }
-            msg.clearBody();
-            msg.writeString("777");
-            msg.reset();
-            try {
-                msg.readBytes(new byte[3]);
-                fail("Should have thrown exception");
-            } catch (MessageFormatException e) {
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testReadBigString() {
+    public void testReadBigString() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
         try {
             // Test with a 1Meg String
@@ -603,7 +556,7 @@ public class OpenWireJMSStreamMessageTest {
     }
 
     @Test
-    public void testReadBytes() {
+    public void testReadBytes() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
         try {
             byte[] test = new byte[50];
@@ -666,7 +619,7 @@ public class OpenWireJMSStreamMessageTest {
     }
 
     @Test
-    public void testReadObject() {
+    public void testReadObject() throws Exception {
         OpenWireJMSStreamMessage msg = new OpenWireJMSStreamMessage();
         try {
             byte testByte = (byte) 2;
@@ -955,7 +908,7 @@ public class OpenWireJMSStreamMessageTest {
     }
 
     @Test
-    public void testWriteObject() {
+    public void testWriteObject() throws Exception {
         try {
             OpenWireJMSStreamMessage message = new OpenWireJMSStreamMessage();
             message.clearBody();
