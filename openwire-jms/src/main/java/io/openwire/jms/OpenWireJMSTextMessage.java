@@ -48,6 +48,13 @@ public class OpenWireJMSTextMessage extends OpenWireJMSMessage implements TextMe
     }
 
     @Override
+    public OpenWireJMSTextMessage copy() throws JMSException {
+        OpenWireJMSTextMessage other = new OpenWireJMSTextMessage(message.copy());
+        copy(other);
+        return other;
+    }
+
+    @Override
     public void clearBody() throws JMSException {
         super.clearBody();
         message.clearBody();
