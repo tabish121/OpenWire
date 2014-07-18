@@ -341,7 +341,7 @@ public class OpenWireJMSMessage implements Message {
             throw new NullPointerException("Property name cannot be null");
         }
 
-        return new OpenWireMessagePropertyGetter(name).get(message);
+        return OpenWireMessagePropertyGetter.getProperty(message, name);
     }
 
     @Override
@@ -427,7 +427,7 @@ public class OpenWireJMSMessage implements Message {
         // expected property types for the settings values.
         value = convertScheduled(name, value);
 
-        new OpenWireMessagePropertySetter(name).set(message, value);
+        OpenWireMessagePropertySetter.setProperty(message, name, value);
     }
 
     @Override

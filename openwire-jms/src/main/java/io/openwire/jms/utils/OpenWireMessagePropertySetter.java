@@ -158,6 +158,29 @@ public class OpenWireMessagePropertySetter {
         });
     }
 
+    /**
+     * Static set method that takes a property name and sets the value either via
+     * a registered property set object or through the OpenWireMessage setProperty
+     * method.
+     *
+     * @param message
+     *        the OpenWireMessage instance to write to.
+     * @param name
+     *        the property name that is being written.
+     * @param value
+     *        the new value to assign for the named property.
+     *
+     * @throws JMSException if an error occurs while writting the defined property.
+     */
+    public static void setProperty(OpenWireMessage message, String name, Object value) throws JMSException {
+        PropertySetter jmsPropertyExpression = PROPERTY_SETTERS.get(name);
+        if (jmsPropertyExpression != null) {
+            jmsPropertyExpression.setProperty(message, value);
+        } else {
+            message.setProperty(name, value);
+        }
+    }
+
     private final String name;
     private final PropertySetter jmsPropertyExpression;
 
@@ -196,10 +219,9 @@ public class OpenWireMessagePropertySetter {
     public void set(OpenWireMessage message, Object value) throws JMSException {
         if (jmsPropertyExpression != null) {
             jmsPropertyExpression.setProperty(message, value);
-            return;
+        } else {
+            message.setProperty(name, value);
         }
-
-        message.setProperty(name, value);
     }
 
     /**

@@ -182,6 +182,12 @@ public class OpenWireMessagePropertyGetter {
                 return Boolean.valueOf(message.isJMSXGroupFirstForConsumer());
             }
         });
+        PROPERTY_GETTERS.put("JMSXMimeType", new PropertyGetter() {
+            @Override
+            public Object getProperty(OpenWireMessage message) {
+                return String.valueOf(message.getMimeType());
+            }
+        });
     }
 
     /**
@@ -192,6 +198,33 @@ public class OpenWireMessagePropertyGetter {
      */
     public static Set<String> getPropertyNames() {
         return PROPERTY_GETTERS.keySet();
+    }
+
+    /**
+     * Static get method that takes a property name and gets the value either via
+     * a registered property get object or through the OpenWireMessage getProperty
+     * method.
+     *
+     * @param message
+     *        the OpenWireMessage instance to read from
+     * @param name
+     *        the property name that is being requested.
+     *
+     * @return the correct value either mapped to an OpenWire attribute of a Message property.
+     *
+     * @throws JMSException if an error occurs while reading the defined property.
+     */
+    public static Object getProperty(OpenWireMessage message, String name) throws JMSException {
+        Object value = null;
+
+        PropertyGetter jmsPropertyExpression = PROPERTY_GETTERS.get(name);
+        if (jmsPropertyExpression != null) {
+            value = jmsPropertyExpression.getProperty(message);
+        } else {
+            value = message.getProperty(name);
+        }
+
+        return value;
     }
 
     private final String name;
