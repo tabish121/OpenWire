@@ -20,15 +20,11 @@ import io.openwire.commands.OpenWireStreamMessage;
 import io.openwire.utils.ExceptionSupport;
 import io.openwire.utils.OpenWireMarshallingSupport;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
 
 import javax.jms.JMSException;
 import javax.jms.MessageEOFException;
@@ -76,7 +72,7 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
         return other;
     }
 
-    private void copy(OpenWireJMSStreamMessage copy) {
+    private void copy(OpenWireJMSStreamMessage copy) throws JMSException {
         storeContent();
         super.copy(copy);
         copy.dataOut = null;
@@ -719,70 +715,45 @@ public class OpenWireJMSStreamMessage extends OpenWireJMSMessage implements Stre
         this.remainingBytes = -1;
     }
 
-    // TODO - Compress on store.
     private void initializeWriting() throws JMSException {
         checkReadOnlyBody();
         if (this.dataOut == null) {
             this.bytesOut = new ByteArrayOutputStream();
-            OutputStream os = bytesOut;
-            if (message.isUseCompression()) {
-                message.setCompressed(true);
-                os = new DeflaterOutputStream(os);
-            }
-            this.dataOut = new DataOutputStream(os);
+            this.dataOut = new DataOutputStream(bytesOut);
         }
 
         // For a message that already had a body and was sent we need to restore the content
         // if the message is used again without having its clearBody method called.
-        Buffer oldContent = message.getContent();
-        if (oldContent != null && !oldContent.isEmpty()) {
+        if (message.hasContent()) {
+            Buffer content = message.getPayload();
             try {
-                if (message.isCompressed()) {
-                    ByteArrayInputStream input = new ByteArrayInputStream(oldContent.getData(), oldContent.getOffset(), oldContent.getLength());
-                    InflaterInputStream inflater = new InflaterInputStream(input);
-                    try {
-                        byte[] buffer = new byte[8*1024];
-                        int read = 0;
-                        while ((read = inflater.read(buffer)) != -1) {
-                            this.dataOut.write(buffer, 0, read);
-                        }
-                    } finally {
-                        inflater.close();
-                    }
-                } else {
-                    this.dataOut.write(oldContent.getData(), oldContent.getOffset(), oldContent.getLength());
-                }
-
-                // Free up the buffer from the old content, will be re-written when
-                // tbe message is sent again and storeContent() is called.
-                message.setContent(null);
-            } catch (IOException ioe) {
-                throw ExceptionSupport.create(ioe);
+                this.dataOut.write(content.getData(), content.getOffset(), content.getLength());
+            } catch (IOException e) {
+                throw ExceptionSupport.create(e);
             }
+            message.setContent(null);
         }
     }
 
     private void initializeReading() throws MessageNotReadableException {
         checkWriteOnlyBody();
         if (this.dataIn == null) {
-            Buffer data = message.getContent();
-            if (data == null) {
-                data = new Buffer(new byte[] {}, 0, 0);
+            Buffer data;
+            try {
+                data = message.getPayload();
+            } catch (JMSException e) {
+                throw new MessageNotReadableException("Failed to read content from message.");
             }
             InputStream is = new ByteArrayInputStream(data);
-            if (message.isCompressed()) {
-                is = new InflaterInputStream(is);
-                is = new BufferedInputStream(is);
-            }
             this.dataIn = new DataInputStream(is);
         }
     }
 
-    private void storeContent() {
+    private void storeContent() throws JMSException {
         if (dataOut != null) {
             try {
                 dataOut.close();
-                message.setContent(bytesOut.toBuffer());
+                message.setPayload(bytesOut.toBuffer());
                 bytesOut = null;
                 dataOut = null;
             } catch (IOException ioe) {
