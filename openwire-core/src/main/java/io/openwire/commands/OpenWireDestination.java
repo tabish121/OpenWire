@@ -213,11 +213,16 @@ public abstract class OpenWireDestination implements Destination, DataStructure,
 
     public void setPhysicalName(String physicalName) {
         physicalName = physicalName.trim();
-        final int len = physicalName.length();
+        final int length = physicalName.length();
+
+        if (physicalName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid destination name: a non-empty name is required");
+        }
+
         // options offset
         int p = -1;
         boolean composite = false;
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < length; i++) {
             char c = physicalName.charAt(i);
             if (c == '?') {
                 p = i;
