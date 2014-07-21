@@ -35,7 +35,21 @@ public class OpenWireMessagePropertyGetter {
 
     private static final Map<String, PropertyGetter> PROPERTY_GETTERS = new HashMap<String, PropertyGetter>();
 
-    interface PropertyGetter {
+    /**
+     * Interface for a Property Get intercepter object used to lookup JMS style
+     * properties that are part of the OpenWire Message object members or perform
+     * some needed conversion action before returned some named property.
+     */
+    public interface PropertyGetter {
+
+        /**
+         * Called when the names property is queried from an OpenWire Message object.
+         *
+         * @param message
+         *        The message being acted upon.
+         *
+         * @return the correct property value from the given Message.
+         */
         Object getProperty(OpenWireMessage message);
     }
 
@@ -225,6 +239,35 @@ public class OpenWireMessagePropertyGetter {
         }
 
         return value;
+    }
+
+    /**
+     * Allows for the additional PropertyGetter instances to be added to the global set.
+     *
+     * @param propertyName
+     *        The name of the Message property that will be intercepted.
+     * @param getter
+     *        The PropertyGetter instance that should be used for the named property.
+     */
+    public static void addPropertyGetter(String propertyName, PropertyGetter getter) {
+        PROPERTY_GETTERS.put(propertyName, getter);
+    }
+
+    /**
+     * Given a property name, remove the configured getter that has been assigned to
+     * intercept the queries for that property value.
+     *
+     * @param propertyName
+     *        The name of the Property Getter to remove.
+     *
+     * @return true if a getter was removed from the global set.
+     */
+    public boolean removePropertyGetter(String propertyName) {
+        if (PROPERTY_GETTERS.remove(propertyName) != null) {
+            return true;
+        }
+
+        return false;
     }
 
     private final String name;

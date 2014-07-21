@@ -35,7 +35,23 @@ public class OpenWireMessagePropertySetter {
 
     private static final Map<String, PropertySetter> PROPERTY_SETTERS = new HashMap<String, PropertySetter>();
 
+    /**
+     * Interface for a Property Set intercepter object used to write JMS style
+     * properties that are part of the OpenWire Message object members or perform
+     * some needed conversion action before some named property is set.
+     */
     interface PropertySetter {
+
+        /**
+         * Called when the names property is assigned from an OpenWire Message object.
+         *
+         * @param message
+         *        The message instance being acted upon.
+         * @param value
+         *        The value to assign to the intercepted property.
+         *
+         * @throws MessageFormatException if an error occurs writing the property.
+s         */
         void setProperty(OpenWireMessage message, Object value) throws MessageFormatException;
     }
 
@@ -179,6 +195,35 @@ public class OpenWireMessagePropertySetter {
         } else {
             message.setProperty(name, value);
         }
+    }
+
+    /**
+     * Allows for the additional PropertySetter instances to be added to the global set.
+     *
+     * @param propertyName
+     *        The name of the Message property that will be intercepted.
+     * @param getter
+     *        The PropertySetter instance that should be used for the named property.
+     */
+    public static void addPropertySetter(String propertyName, PropertySetter getter) {
+        PROPERTY_SETTERS.put(propertyName, getter);
+    }
+
+    /**
+     * Given a property name, remove the configured getter that has been assigned to
+     * intercept the queries for that property value.
+     *
+     * @param propertyName
+     *        The name of the Property Getter to remove.
+     *
+     * @return true if a getter was removed from the global set.
+     */
+    public boolean removePropertySetter(String propertyName) {
+        if (PROPERTY_SETTERS.remove(propertyName) != null) {
+            return true;
+        }
+
+        return false;
     }
 
     private final String name;
