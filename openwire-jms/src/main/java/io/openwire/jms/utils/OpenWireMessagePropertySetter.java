@@ -99,7 +99,20 @@ s         */
         PROPERTY_SETTERS.put("JMSDeliveryMode", new PropertySetter() {
             @Override
             public void setProperty(OpenWireMessage message, Object value) throws MessageFormatException {
-                Integer rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
+                Integer rc = null;
+                try {
+                    rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
+                } catch (NumberFormatException nfe) {
+                    if (value instanceof String) {
+                        if (((String) value).equalsIgnoreCase("PERSISTENT")) {
+                            rc = DeliveryMode.PERSISTENT;
+                        } else if (((String) value).equalsIgnoreCase("NON_PERSISTENT")) {
+                            rc = DeliveryMode.NON_PERSISTENT;
+                        } else {
+                            throw nfe;
+                        }
+                    }
+                }
                 if (rc == null) {
                     Boolean bool = (Boolean) TypeConversionSupport.convert(value, Boolean.class);
                     if (bool == null) {
